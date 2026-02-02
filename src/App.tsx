@@ -30,9 +30,9 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-black text-white font-sans overflow-hidden">
+    <div className="flex flex-col-reverse md:flex-row min-h-screen md:h-screen w-full bg-black text-white font-sans md:overflow-hidden">
       {/* Sidebar de Controles */}
-      <aside className="w-[400px] shrink-0 h-full border-r border-gray-800 bg-gray-900 z-10 shadow-xl">
+      <aside className="w-full md:w-[400px] shrink-0 h-auto md:h-full border-t md:border-t-0 md:border-r border-gray-800 bg-gray-900 z-10 shadow-xl md:overflow-y-auto">
         <ControlPanel
           state={{ image, data, config, format }}
           onUpdateData={updateData}
@@ -44,7 +44,7 @@ function App() {
       </aside>
 
       {/* Área de Visualização */}
-      <main className="flex-1 flex flex-col items-center justify-center bg-zinc-950 relative">
+      <main className="flex-1 flex flex-col items-center justify-center bg-zinc-950 relative min-h-[60vh] md:min-h-0 md:h-auto py-8 md:py-0">
         {/* Grid Background para dar um toque técnico */}
         <div className="absolute inset-0 opacity-10"
           style={{

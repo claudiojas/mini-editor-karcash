@@ -18,9 +18,10 @@ Transformar dados brutos (fotos e preços) em anúncios profissionais prontos pa
 ### 3.1 Requisitos Funcionais (RF)
 * **RF01 - Upload de Ativos:** Permitir o upload de imagens do veículo (JPG, PNG, WebP) via interface drag-and-drop ou seletor.
 * **RF02 - Edição de Dados:** Inputs específicos para Marca, Modelo, Ano, Valor Tabela Fipe e Valor KarCash.
-* **RF03 - Inteligência de Cálculo:** O sistema deve calcular automaticamente a margem de desconto (`Fipe - Valor KarCash`) para alimentar o gatilho visual de "Abaixo da Fipe".
-* **RF04 - Manipulação de Imagem (UX):** Ferramenta de escala (zoom) para enquadramento manual do veículo sobre o layout de fundo.
-* **RF05 - Exportação HD:** Geração de arquivo PNG em alta resolução (proporção 9:16) otimizado para visualização mobile (WhatsApp/Instagram).
+* **RF03 - Flexibilidade de Preços:** Campos independentes para Fipe, Valor de Venda e "Abaixo da Fipe", permitindo inserção manual de valores promocionais sem dependência de cálculo automático.
+* **RF04 - Manipulação de Imagem (UX):** Ferramentas de **Zoom (0.1x - 3x)** e **Pan (X/Y)** para enquadramento preciso do veículo.
+* **RF05 - Exportação Multi-Formato:** Geração de arquivos PNG em alta resolução para **Story (9:16)** e **Feed (4:5)**.
+* **RF06 - Ajuste Fino de Tipografia:** Controles deslizantes para tamanho de fonte (Modelo e Preço) e posicionamento vertical de elementos secundários.
 
 ### 3.2 Requisitos Não-Funcionais (RNF)
 * **RNF01 - Interface Intuitiva:** Design focado em "zero curva de aprendizado" para o usuário final.

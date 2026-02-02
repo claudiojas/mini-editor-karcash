@@ -14,7 +14,7 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
 
 
     return (
-        <div className="flex flex-col gap-6 p-6 bg-gray-900 text-white w-full h-full overflow-y-auto border-r border-gray-800">
+        <div className="flex flex-col gap-6 p-6 bg-gray-900 text-white w-full">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-neon-green">Editor KarCard</h2>
                 {/* Logo placeholder */}
