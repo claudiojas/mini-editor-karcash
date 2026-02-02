@@ -16,6 +16,7 @@ const INITIAL_CONFIG: CanvasConfig = {
     overlayOpacity: 1,
     modelFontSize: 110,
     salePriceFontSize: 120,
+    detailsOffsetY: 0,
 };
 
 export function useKarCard() {

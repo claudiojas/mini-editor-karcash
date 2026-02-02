@@ -13,6 +13,7 @@ export interface CanvasConfig {
     overlayOpacity: number;
     modelFontSize: number;
     salePriceFontSize: number; // Novo campo
+    detailsOffsetY: number; // Offset vertical
 }
 
 export interface KarCardState {

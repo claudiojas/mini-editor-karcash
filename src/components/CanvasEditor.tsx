@@ -171,8 +171,9 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         }
         ctx.fillText(line, LEFT_ALIGN, y);
 
-        // Ajustar Y para os proximos elementos baseados na altura do modelo
-        let currentY = y + 120;
+        // Ajustar Y para os proximos elementos baseados na altura do modelo + Offset Manual
+        const detailsOffset = state.config.detailsOffsetY || 0;
+        let currentY = y + 120 + detailsOffset;
 
         // 3. Versão/Configurações (Texto Branco)
         ctx.font = '50px Ubuntu, sans-serif';

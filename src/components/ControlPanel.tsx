@@ -124,6 +124,21 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                             className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:border-neon-green focus:outline-none"
                             placeholder="Ex: 2021"
                         />
+                        <div className="pt-2">
+                            <label className="text-[10px] text-gray-500 flex justify-between">
+                                <span>Posição Vertical (Extra)</span>
+                                <span>{state.config.detailsOffsetY || 0}px</span>
+                            </label>
+                            <input
+                                type="range"
+                                min="-200"
+                                max="200"
+                                step="5"
+                                value={state.config.detailsOffsetY || 0}
+                                onChange={(e) => onUpdateConfig('detailsOffsetY', parseFloat(e.target.value))}
+                                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                            />
+                        </div>
                     </div>
                 </div>
 
