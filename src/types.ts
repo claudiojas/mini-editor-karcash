@@ -1,0 +1,19 @@
+export interface VehicleData {
+    brand: string;
+    model: string;
+    year: string;
+    fipePrice: number;
+    salePrice: number;
+}
+
+export interface CanvasConfig {
+    zoom: number;
+    pan: { x: number; y: number };
+    overlayOpacity: number;
+}
+
+export interface KarCardState {
+    image: string | null; // URL da imagem carregada
+    data: VehicleData;
+    config: CanvasConfig;
+}
