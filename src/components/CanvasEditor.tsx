@@ -98,7 +98,6 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const COLOR_BLACK = '#000000';
 
         // Fontes
-        const FONT_EXTRA_BOLD = '900 110px Ubuntu, sans-serif'; // Modelo de Destaque
 
         // Posições (Ajustadas para o layout superior)
         const LEFT_ALIGN = 80;
@@ -123,7 +122,11 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
         // 2. Modelo (Texto Gigante Neon)
         const modeloText = (state.data.model || 'MODELO').toUpperCase();
-        ctx.font = FONT_EXTRA_BOLD;
+
+        // Tamanho da fonte dinâmico
+        const fontSize = state.config.modelFontSize || 110;
+        ctx.font = `900 ${fontSize}px Ubuntu, sans-serif`;
+
         ctx.fillStyle = COLOR_NEON;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
@@ -134,6 +137,8 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         let y = TOP_CONTENT + 100;
 
         // Lógica básica de multiline
+        const lineHeight = fontSize * 1.0; // Altura da linha proporcional
+
         for (let n = 0; n < words.length; n++) {
             const testLine = line + words[n] + ' ';
             const metrics = ctx.measureText(testLine);
@@ -141,7 +146,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             if (testWidth > maxWidth && n > 0) {
                 ctx.fillText(line, LEFT_ALIGN, y);
                 line = words[n] + ' ';
-                y += 110; // Line height
+                y += lineHeight;
             }
             else {
                 line = testLine;
