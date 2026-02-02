@@ -98,19 +98,19 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const COLOR_BLACK = '#000000';
 
         // Fontes
-        const FONT_EXTRA_BOLD = '900 110px Inter, sans-serif'; // Modelo de Destaque
+        const FONT_EXTRA_BOLD = '900 110px Ubuntu, sans-serif'; // Modelo de Destaque
 
         // Posições (Ajustadas para o layout superior)
         const LEFT_ALIGN = 80;
-        const RIGHT_ALIGN = 1000; // Alinhamento à direita
-
-        const TOP_CONTENT = 600; // Início do bloco de conteúdo (abaixo do logo)
+        // Alinhamento à direita (base)
+        const RIGHT_COLUMN_X = 1000;
+        const TOP_CONTENT = 575; // Início do bloco de conteúdo (abaixo do logo)
 
         // --- Esquerda: Dados do Veículo ---
 
         // 1. Marca (Badge Neon com texto preto)
         const marcaText = (state.data.brand || 'MARCA').toUpperCase();
-        ctx.font = 'bold 50px Inter, sans-serif';
+        ctx.font = 'bold 50px Ubuntu, sans-serif';
         const marcaWidth = ctx.measureText(marcaText).width + 60; // Padding
 
         ctx.fillStyle = COLOR_NEON;
@@ -153,80 +153,107 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         let currentY = y + 120;
 
         // 3. Versão/Configurações (Texto Branco)
-        ctx.font = '50px Inter, sans-serif';
+        ctx.font = '50px Ubuntu, sans-serif';
         ctx.fillStyle = COLOR_WHITE;
         ctx.fillText("Configurações", LEFT_ALIGN, currentY);
 
         // 4. Ano (Texto Neon Pequeno)
         const anoText = (state.data.year || 'ANO');
-        ctx.font = 'bold 50px Inter, sans-serif';
+        ctx.font = 'bold 50px Ubuntu, sans-serif';
         ctx.fillStyle = COLOR_NEON;
         ctx.fillText(anoText, LEFT_ALIGN, currentY + 70);
 
 
         // --- Direita: Preços ---
-        const RIGHT_COLUMN_TOP = TOP_CONTENT;
+        // Ajuste fino de posicionamento baseado no Template Story Padrão
+        const RIGHT_COLUMN_TOP = 470; // Subindo um pouco mais para alinhar com o topo da Marca
 
-        const drawRightBox = (label: string, value: number, y: number, isPromo: boolean = false) => {
-            const valueText = `R$ ${value.toLocaleString('pt-BR')}`;
-            const boxWidth = 450;
-            const boxHeight = 130;
-            const boxX = RIGHT_ALIGN - boxWidth;
+        const drawPriceBox = (label: string, value: number, y: number, type: 'fipe' | 'economy') => {
+            // Dimensões exatas do "quadrado" (retângulo)
+            const boxWidth = 320;
+            const boxHeight = 100;
+            const boxX = RIGHT_COLUMN_X - boxWidth;
 
-            if (!isPromo) {
-                // Estilo Tabela Fipe (Box Branca)
-                ctx.fillStyle = COLOR_WHITE;
-                ctx.fillRect(boxX, y, boxWidth, boxHeight);
+            // Cores
+            const bgColor = type === 'fipe' ? COLOR_WHITE : COLOR_NEON;
+            const textColor = COLOR_BLACK;
 
-                // Label pequena
-                ctx.fillStyle = COLOR_BLACK;
-                ctx.font = 'bold 25px Inter, sans-serif';
-                ctx.textAlign = 'right';
-                ctx.fillText(label, RIGHT_ALIGN - 20, y + 35);
+            // Desenhar Box
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(boxX, y, boxWidth, boxHeight);
 
-                // Valor
-                ctx.font = '900 65px Inter, sans-serif';
-                ctx.fillText(valueText, RIGHT_ALIGN - 20, y + 100);
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'right';
 
-            } else {
-                // Estilo Abaixo da Fipe (Box Neon)
-                ctx.fillStyle = COLOR_NEON;
-                ctx.fillRect(boxX, y, boxWidth, boxHeight);
+            // Label "TABELA FIPE:" ou "ABAIXO DA FIPE:"
+            // No modelo: Pequeno, Bold, alinhado à direita, cor preta
+            ctx.fillStyle = textColor;
+            ctx.font = 'bold 22px Ubuntu, sans-serif';
+            ctx.fillText(label, RIGHT_COLUMN_X - 25, y + 25);
 
-                // Label
-                ctx.fillStyle = COLOR_BLACK;
-                ctx.font = 'bold 25px Inter, sans-serif';
-                ctx.textAlign = 'right';
-                ctx.fillText(label, RIGHT_ALIGN - 20, y + 35);
+            // Valor "R$ XX.XXX"
+            // Separar R$ do valor para tamanhos diferentes
+            const priceValue = value.toLocaleString('pt-BR');
+            const currencySym = 'R$';
 
-                // Valor (Diferença)
-                ctx.font = '900 65px Inter, sans-serif';
-                ctx.fillText(valueText, RIGHT_ALIGN - 20, y + 100);
-            }
+            ctx.fillStyle = textColor;
+
+            // 1. Renderizar Valor Numérico (Grande)
+            ctx.font = '900 65px Ubuntu, sans-serif';
+            const valX = RIGHT_COLUMN_X - 20;
+            const valY = y + 65;
+            ctx.fillText(priceValue, valX, valY);
+
+            // 2. Renderizar R$ (Pequeno)
+            const valMetrics = ctx.measureText(priceValue);
+            ctx.font = 'bold 30px Ubuntu, sans-serif';
+            ctx.fillText(currencySym, valX - valMetrics.width - 10, valY + 2); // Leve ajuste Y para alinhar visualmente
         };
 
-        // 1. Tabela Fipe
-        if (state.data.fipePrice > 0) {
-            drawRightBox("TABELA FIPE:", state.data.fipePrice, RIGHT_COLUMN_TOP);
-        }
+        // 1. Tabela Fipe (Box Branca)
+        // 1. Tabela Fipe (Box Branca)
+        // Sempre visível
+        drawPriceBox("TABELA FIPE:", state.data.fipePrice, RIGHT_COLUMN_TOP, 'fipe');
 
-        // 2. Preço KarCash (Sem box, gigante)
-        const karchashY = RIGHT_COLUMN_TOP + 200;
+        // 2. Preço KarCash (Sem box, gigante, Neon)
+        // No modelo, o valor KarCash fica bem no meio, entre Fipe e Abaixo da Fipe
+        // Espaçamento generoso
+        // Espaçamento generoso (Reduzido proporcionalmente)
+        const karcashY = RIGHT_COLUMN_TOP + 150;
+
+        ctx.textBaseline = 'top';
         ctx.textAlign = 'right';
+
+        // Label "KARCASH:" (Branca, pequena)
         ctx.fillStyle = COLOR_WHITE;
-        ctx.font = '40px Inter, sans-serif';
-        ctx.fillText("KARCASH:", RIGHT_ALIGN, karchashY);
+        ctx.font = 'bold 30px Ubuntu, sans-serif';
+        ctx.fillText("KARCASH:", RIGHT_COLUMN_X, karcashY);
 
+        // Valor Gigante Neon
+        // Valor Gigante Neon
         ctx.fillStyle = COLOR_NEON;
-        ctx.font = '900 130px Inter, sans-serif';
-        const saleText = `R$ ${state.data.salePrice.toLocaleString('pt-BR')}`;
-        ctx.fillText(saleText, RIGHT_ALIGN, karchashY + 130);
 
-        // 3. Abaixo da Fipe
+        const kValue = state.data.salePrice.toLocaleString('pt-BR');
+        const kSym = 'R$';
+
+        // 1. Valor Numérico
+        ctx.font = '900 120px Ubuntu, sans-serif';
+        const kY = karcashY + 43;
+        ctx.fillText(kValue, RIGHT_COLUMN_X, kY);
+
+        // 2. Símbolo R$ (Menor)
+        const kMetrics = ctx.measureText(kValue);
+        ctx.font = 'bold 50px Ubuntu, sans-serif'; // Proporcional ao 120px
+        ctx.fillText(kSym, RIGHT_COLUMN_X - kMetrics.width - 15, kY + 50); // Ajuste Y manual para descer mais o R$
+
+        // 3. Abaixo da Fipe (Box Neon)
+        // Espaço abaixo do valor KarCash
         const economy = state.data.fipePrice - state.data.salePrice;
-        if (economy > 0) {
-            drawRightBox("ABAIXO DA FIPE:", economy, karchashY + 220, true);
-        }
+        // Sempre visível
+        // karcashY + gap (180 aprox altura texto) + gap extra
+        // karcashY + gap (Reduzido proporcionalmente)
+        const economyY = karcashY + 180;
+        drawPriceBox("ABAIXO DA FIPE:", economy, economyY, 'economy');
     };
 
     return (
