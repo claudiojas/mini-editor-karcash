@@ -150,6 +150,21 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onImageUploa
                             className="w-full bg-gray-800 border border-neon-green rounded px-3 py-2 text-sm focus:outline-none font-bold text-white"
                             placeholder="0,00"
                         />
+                        <div className="pt-2">
+                            <label className="text-[10px] text-gray-500 flex justify-between">
+                                <span>Tamanho da Fonte</span>
+                                <span>{state.config.salePriceFontSize || 120}px</span>
+                            </label>
+                            <input
+                                type="range"
+                                min="80"
+                                max="200"
+                                step="5"
+                                value={state.config.salePriceFontSize || 120}
+                                onChange={(e) => onUpdateConfig('salePriceFontSize', parseFloat(e.target.value))}
+                                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                            />
+                        </div>
                     </div>
                     {/* Novo campo manual Economy */}
                     <div className="space-y-1 col-span-2">

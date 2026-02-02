@@ -241,15 +241,25 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const kValue = state.data.salePrice.toLocaleString('pt-BR');
         const kSym = 'R$';
 
+        // Tamanho Dinâmico
+        const kFontSize = state.config.salePriceFontSize || 120;
+
         // 1. Valor Numérico
-        ctx.font = '900 120px Ubuntu, sans-serif';
+        ctx.font = `900 ${kFontSize}px Ubuntu, sans-serif`;
         const kY = karcashY + 43;
         ctx.fillText(kValue, RIGHT_COLUMN_X, kY);
 
-        // 2. Símbolo R$ (Menor)
+        // 2. Símbolo R$ (Menor e Proporcional)
+        // Antes: 120px valor -> 50px R$ (aprox 0.42)
+        const symFontSize = Math.round(kFontSize * 0.42);
+
         const kMetrics = ctx.measureText(kValue);
-        ctx.font = 'bold 50px Ubuntu, sans-serif'; // Proporcional ao 120px
-        ctx.fillText(kSym, RIGHT_COLUMN_X - kMetrics.width - 15, kY + 50); // Ajuste Y manual para descer mais o R$
+        ctx.font = `bold ${symFontSize}px Ubuntu, sans-serif`;
+        // Ajuste Y do símbolo era +50 fixo
+        // Se 120 -> 50, então offset aprox 0.4 * FontSize
+        const symYOffset = kFontSize * 0.42;
+
+        ctx.fillText(kSym, RIGHT_COLUMN_X - kMetrics.width - 15, kY + symYOffset);
 
         // 3. Abaixo da Fipe (Box Neon)
         // Espaço abaixo do valor KarCash

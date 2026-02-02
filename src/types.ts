@@ -11,7 +11,8 @@ export interface CanvasConfig {
     zoom: number;
     pan: { x: number; y: number };
     overlayOpacity: number;
-    modelFontSize: number; // Novo campo
+    modelFontSize: number;
+    salePriceFontSize: number; // Novo campo
 }
 
 export interface KarCardState {
