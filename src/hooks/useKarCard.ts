@@ -22,6 +22,7 @@ export function useKarCard() {
     const [image, setImage] = useState<string | null>(null);
     const [data, setData] = useState<VehicleData>(INITIAL_DATA);
     const [config, setConfig] = useState<CanvasConfig>(INITIAL_CONFIG);
+    const [format, setFormat] = useState<'story' | 'feed'>('story');
 
     const discountPercentage = useMemo(() => {
         if (!data.fipePrice || !data.salePrice) return 0;
@@ -48,5 +49,7 @@ export function useKarCard() {
         config,
         updateConfig,
         discountPercentage,
+        format,      // Exportando format
+        setFormat,   // Exportando setFormat
     };
 }

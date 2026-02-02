@@ -14,9 +14,26 @@ export interface CanvasEditorRef {
 export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ state, discountPercentage }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    // Dimensões para Stories/Reels (1080x1920) mas escalado para visualização
-    const CANVAS_WIDTH = 1080;
-    const CANVAS_HEIGHT = 1920;
+    // Configuração de Layouts
+    const LAYOUTS = {
+        story: {
+            width: 1080,
+            height: 1920,
+            topContent: 575,
+            rightColumnTop: 470,
+        },
+        feed: {
+            width: 1080,
+            height: 1350,
+            topContent: 400,
+            rightColumnTop: 320,
+        }
+    };
+
+    const layout = LAYOUTS[state.format] || LAYOUTS.story;
+
+    const CANVAS_WIDTH = layout.width;
+    const CANVAS_HEIGHT = layout.height;
 
     // Escala de visualização no navegador (ex: exibir menor na tela)
     const DISPLAY_SCALE = 0.35;
@@ -103,7 +120,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const LEFT_ALIGN = 80;
         // Alinhamento à direita (base)
         const RIGHT_COLUMN_X = 1000;
-        const TOP_CONTENT = 575; // Início do bloco de conteúdo (abaixo do logo)
+        const TOP_CONTENT = layout.topContent; // Dinâmico
 
         // --- Esquerda: Dados do Veículo ---
 
@@ -171,7 +188,8 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
         // --- Direita: Preços ---
         // Ajuste fino de posicionamento baseado no Template Story Padrão
-        const RIGHT_COLUMN_TOP = 470; // Subindo um pouco mais para alinhar com o topo da Marca
+        // Ajuste fino de posicionamento baseado no Template Story Padrão
+        const RIGHT_COLUMN_TOP = layout.rightColumnTop; // Dinâmico
 
         const drawPriceBox = (label: string, value: number, y: number, type: 'fipe' | 'economy') => {
             // Dimensões exatas do "quadrado" (retângulo)

@@ -5,11 +5,12 @@ interface ControlPanelProps {
     state: KarCardState;
     onUpdateData: (field: any, value: any) => void;
     onUpdateConfig: (field: any, value: any) => void;
+    onUpdateFormat: (format: 'story' | 'feed') => void; // Nova prop
     onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onDownload: () => void;
 }
 
-export function ControlPanel({ state, onUpdateData, onUpdateConfig, onImageUpload, onDownload }: ControlPanelProps) {
+export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateFormat, onImageUpload, onDownload }: ControlPanelProps) {
 
 
     return (
@@ -17,6 +18,28 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onImageUploa
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-neon-green">Editor KarCard</h2>
                 {/* Logo placeholder */}
+            </div>
+
+            {/* Format Switcher */}
+            <div className="bg-gray-800/50 p-1 rounded-lg border border-gray-700 flex">
+                <button
+                    onClick={() => onUpdateFormat('story')}
+                    className={`flex-1 py-2 rounded-md text-xs font-bold transition-all ${state.format === 'story'
+                        ? 'bg-neon-green text-black shadow-lg shadow-neon-green/20'
+                        : 'text-gray-400 hover:text-white'
+                        }`}
+                >
+                    Story (9:16)
+                </button>
+                <button
+                    onClick={() => onUpdateFormat('feed')}
+                    className={`flex-1 py-2 rounded-md text-xs font-bold transition-all ${state.format === 'feed'
+                        ? 'bg-neon-green text-black shadow-lg shadow-neon-green/20'
+                        : 'text-gray-400 hover:text-white'
+                        }`}
+                >
+                    Feed (4:5)
+                </button>
             </div>
 
             {/* Upload */}

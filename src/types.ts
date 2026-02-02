@@ -19,4 +19,5 @@ export interface KarCardState {
     image: string | null; // URL da imagem carregada
     data: VehicleData;
     config: CanvasConfig;
+    format: 'story' | 'feed'; // Novo campo de formato
 }
