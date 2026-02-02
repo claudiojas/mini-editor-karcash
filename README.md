@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# KarCard Generator 🚗💨
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Usina de Artes para Venda Automotiva**
 
-Currently, two official plugins are available:
+O **KarCard Generator** é uma aplicação web focada em produtividade para revendedores de veículos. Ele automatiza a criação de artes profissionais para Stories (Instagram/WhatsApp) e Feed, garantindo fidelidade visual à marca **KarCash** e destacando a proposta de valor "Abaixo da Fipe".
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Badge](https://img.shields.io/badge/Status-Versão%201.0-brightgreen)
+![Tech](https://img.shields.io/badge/Stack-React%20|%20TypeScript%20|%20Tailwind-blue)
 
-## React Compiler
+---
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## 🚀 Funcionalidades Principais
 
-## Expanding the ESLint configuration
+### 🎨 Formatos Flexíveis
+- **Story (9:16)**: Layout otimizado para tela cheia (1080x1920).
+- **Feed (4:5)**: Layout condensado para posts e anúncios (1080x1350).
+- **Troca Rápida**: Alterne entre formatos com um clique sem perder os dados preenchidos.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🖼️ Editor Visual Poderoso
+- **Upload Inteligente**: Arraste e solte fotos do veículo.
+- **Ajustes de Imagem**: Controles manuais de **Zoom (0.1x a 3x)** e **Pan (X/Y)** para enquadramento perfeito.
+- **Tipografia Dinâmica**: Ajuste o tamanho da fonte do **Modelo** e do **Preço** para acomodar nomes longos ou dar destaque.
+- **Ajuste Vertical**: Controle fino da posição dos elementos "Configurações" e "Ano" para evitar sobreposições.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 💰 Estratégia Comercial
+- **Campos Independentes**: Insira manualmente o preço da **Tabela Fipe**, **Valor de Venda** e o valor **Abaixo da Fipe**.
+- **Destaque Visual**: Cores Neon (`#CCFF00`) para chamar atenção nos valores e modelos.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 📱 Mobile First
+- Interface 100% responsiva.
+- No celular, edite visualizando o preview no topo e os controles logo abaixo com rolagem fluida.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **React + Vite**: Performance e desenvolvimento rápido.
+- **TypeScript**: Segurança de tipos e escalabilidade.
+- **Tailwind CSS**: Estilização moderna e responsiva.
+- **HTML5 Canvas API**: Renderização e exportação de imagens em alta definição no navegador (Client-side).
+
+---
+
+## 📦 Como Usar
+
+1. **Upload**: Carregue a foto do carro.
+2. **Dados**: Preencha Marca, Modelo, Ano e Preços.
+3. **Ajustes**:
+    - Use o **Zoom/Pan** para focar no carro.
+    - Use os sliders de **Fonte** se o texto for muito grande.
+    - Escolha entre **Story** ou **Feed**.
+4. **Exportar**: Clique em **"Baixar Arte (png)"**. O arquivo será salvo automaticamente com o nome `karcash-marca-modelo.png`.
+
+---
+
+## 💻 Instalação e Execução
+
+Clone o repositório e instale as dependências:
+
+```bash
+# Instalar dependências
+npm install
+
+# Rodar servidor de desenvolvimento
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+O projeto rodará em `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 👤 Autor
+
+Desenvolvido para **KarCash** por **Módulo Web**.
+*Foco em automação, design e conversão.*
