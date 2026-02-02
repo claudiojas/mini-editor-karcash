@@ -92,74 +92,140 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
     }, [state, discountPercentage]);
 
     const drawOverlay = (ctx: CanvasRenderingContext2D) => {
-        // Configurações de estilo
-        const PADDING = 60;
+        // Cores
+        const COLOR_NEON = '#CCFF00';
+        const COLOR_WHITE = '#FFFFFF';
+        const COLOR_BLACK = '#000000';
 
-        // -- Gradiente removido para permitir visualização do background --
-        // const gradient = ctx.createLinearGradient(0, CANVAS_HEIGHT - 900, 0, CANVAS_HEIGHT);
-        // ...
-        // ctx.fillRect(0, CANVAS_HEIGHT - 900, CANVAS_WIDTH, 900);
+        // Fontes
+        const FONT_EXTRA_BOLD = '900 110px Inter, sans-serif'; // Modelo de Destaque
 
+        // Posições (Ajustadas para o layout superior)
+        const LEFT_ALIGN = 80;
+        const RIGHT_ALIGN = 1000; // Alinhamento à direita
 
-        // -- Header: Logo KarCash (Removido a pedido) --
-        // ctx.fillStyle = '#CCFF00'; // Neon Green
-        // ctx.font = 'bold 60px Inter, sans-serif';
-        // ctx.textAlign = 'center';
-        // ctx.fillText('KarCash', CANVAS_WIDTH / 2, 120);
+        const TOP_CONTENT = 600; // Início do bloco de conteúdo (abaixo do logo)
 
+        // --- Esquerda: Dados do Veículo ---
 
-        // -- Informações do Veículo --
+        // 1. Marca (Badge Neon com texto preto)
+        const marcaText = (state.data.brand || 'MARCA').toUpperCase();
+        ctx.font = 'bold 50px Inter, sans-serif';
+        const marcaWidth = ctx.measureText(marcaText).width + 60; // Padding
+
+        ctx.fillStyle = COLOR_NEON;
+        ctx.fillRect(LEFT_ALIGN, TOP_CONTENT, marcaWidth, 80);
+
+        ctx.fillStyle = COLOR_BLACK;
         ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(marcaText, LEFT_ALIGN + 30, TOP_CONTENT + 40);
 
-        // Marca e Modelo
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 80px Inter, sans-serif';
-        const title = `${state.data.brand} ${state.data.model}`.trim() || 'Marca Modelo';
-        ctx.fillText(title, PADDING, CANVAS_HEIGHT - 500);
+        // 2. Modelo (Texto Gigante Neon)
+        const modeloText = (state.data.model || 'MODELO').toUpperCase();
+        ctx.font = FONT_EXTRA_BOLD;
+        ctx.fillStyle = COLOR_NEON;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        // Quebrar linha se for muito longo (simples)
+        const maxWidth = 550; // Metade da tela aprox
+        const words = modeloText.split(' ');
+        let line = '';
+        let y = TOP_CONTENT + 100;
 
-        // Ano
-        ctx.fillStyle = '#AAAAAA';
-        ctx.font = '50px Inter, sans-serif';
-        ctx.fillText(state.data.year || 'Ano', PADDING, CANVAS_HEIGHT - 430);
-
-        // -- Preços --
-        const priceY = CANVAS_HEIGHT - 250;
-
-        // Tabela Fipe (Riscado ou menor)
-        ctx.fillStyle = '#888888';
-        ctx.font = '40px Inter, sans-serif';
-        ctx.fillText('Tabela Fipe:', PADDING, priceY - 60);
-        ctx.font = 'bold 40px Inter, sans-serif';
-        ctx.fillText(`R$ ${state.data.fipePrice.toLocaleString('pt-BR')}`, PADDING + 240, priceY - 60);
-
-        // Valor KarCash (Gigante e Neon)
-        ctx.fillStyle = '#CCFF00';
-        ctx.font = 'bold 100px Inter, sans-serif';
-        const priceText = `R$ ${state.data.salePrice.toLocaleString('pt-BR')}`;
-        ctx.fillText(priceText, PADDING, priceY + 40);
-
-        // --- Badge de Desconto ---
-        if (discountPercentage > 0) {
-            const badgeText = `${discountPercentage}% OFF`;
-            ctx.font = 'bold 60px Inter, sans-serif';
-            const badgeWidth = ctx.measureText(badgeText).width + 60;
-
-            // Fundo do Badge
-            ctx.fillStyle = '#CCFF00';
-            ctx.beginPath();
-            // @ts-ignore - roundRect pode não estar no type def padrão do TS antigo, mas funciona em browsers modernos
-            if (ctx.roundRect) {
-                ctx.roundRect(CANVAS_WIDTH - PADDING - badgeWidth, priceY - 50, badgeWidth, 100, 50);
-            } else {
-                ctx.rect(CANVAS_WIDTH - PADDING - badgeWidth, priceY - 50, badgeWidth, 100);
+        // Lógica básica de multiline
+        for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' ';
+            const metrics = ctx.measureText(testLine);
+            const testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                ctx.fillText(line, LEFT_ALIGN, y);
+                line = words[n] + ' ';
+                y += 110; // Line height
             }
-            ctx.fill();
+            else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, LEFT_ALIGN, y);
 
-            // Texto do Badge
-            ctx.fillStyle = '#000000';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(badgeText, CANVAS_WIDTH - PADDING - (badgeWidth / 2), priceY);
+        // Ajustar Y para os proximos elementos baseados na altura do modelo
+        let currentY = y + 120;
+
+        // 3. Versão/Configurações (Texto Branco)
+        ctx.font = '50px Inter, sans-serif';
+        ctx.fillStyle = COLOR_WHITE;
+        ctx.fillText("Configurações", LEFT_ALIGN, currentY);
+
+        // 4. Ano (Texto Neon Pequeno)
+        const anoText = (state.data.year || 'ANO');
+        ctx.font = 'bold 50px Inter, sans-serif';
+        ctx.fillStyle = COLOR_NEON;
+        ctx.fillText(anoText, LEFT_ALIGN, currentY + 70);
+
+
+        // --- Direita: Preços ---
+        const RIGHT_COLUMN_TOP = TOP_CONTENT;
+
+        const drawRightBox = (label: string, value: number, y: number, isPromo: boolean = false) => {
+            const valueText = `R$ ${value.toLocaleString('pt-BR')}`;
+            const boxWidth = 450;
+            const boxHeight = 130;
+            const boxX = RIGHT_ALIGN - boxWidth;
+
+            if (!isPromo) {
+                // Estilo Tabela Fipe (Box Branca)
+                ctx.fillStyle = COLOR_WHITE;
+                ctx.fillRect(boxX, y, boxWidth, boxHeight);
+
+                // Label pequena
+                ctx.fillStyle = COLOR_BLACK;
+                ctx.font = 'bold 25px Inter, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(label, RIGHT_ALIGN - 20, y + 35);
+
+                // Valor
+                ctx.font = '900 65px Inter, sans-serif';
+                ctx.fillText(valueText, RIGHT_ALIGN - 20, y + 100);
+
+            } else {
+                // Estilo Abaixo da Fipe (Box Neon)
+                ctx.fillStyle = COLOR_NEON;
+                ctx.fillRect(boxX, y, boxWidth, boxHeight);
+
+                // Label
+                ctx.fillStyle = COLOR_BLACK;
+                ctx.font = 'bold 25px Inter, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(label, RIGHT_ALIGN - 20, y + 35);
+
+                // Valor (Diferença)
+                ctx.font = '900 65px Inter, sans-serif';
+                ctx.fillText(valueText, RIGHT_ALIGN - 20, y + 100);
+            }
+        };
+
+        // 1. Tabela Fipe
+        if (state.data.fipePrice > 0) {
+            drawRightBox("TABELA FIPE:", state.data.fipePrice, RIGHT_COLUMN_TOP);
+        }
+
+        // 2. Preço KarCash (Sem box, gigante)
+        const karchashY = RIGHT_COLUMN_TOP + 200;
+        ctx.textAlign = 'right';
+        ctx.fillStyle = COLOR_WHITE;
+        ctx.font = '40px Inter, sans-serif';
+        ctx.fillText("KARCASH:", RIGHT_ALIGN, karchashY);
+
+        ctx.fillStyle = COLOR_NEON;
+        ctx.font = '900 130px Inter, sans-serif';
+        const saleText = `R$ ${state.data.salePrice.toLocaleString('pt-BR')}`;
+        ctx.fillText(saleText, RIGHT_ALIGN, karchashY + 130);
+
+        // 3. Abaixo da Fipe
+        const economy = state.data.fipePrice - state.data.salePrice;
+        if (economy > 0) {
+            drawRightBox("ABAIXO DA FIPE:", economy, karchashY + 220, true);
         }
     };
 
