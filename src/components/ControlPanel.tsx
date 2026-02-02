@@ -136,6 +136,17 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onImageUploa
                             placeholder="0,00"
                         />
                     </div>
+                    {/* Novo campo manual Economy */}
+                    <div className="space-y-1 col-span-2">
+                        <label className="text-xs text-gray-500">Abaixo da Fipe (R$)</label>
+                        <input
+                            type="number"
+                            value={state.data.economyPrice || ''}
+                            onChange={(e) => onUpdateData('economyPrice', parseFloat(e.target.value))}
+                            className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:border-neon-green focus:outline-none"
+                            placeholder="0,00"
+                        />
+                    </div>
                 </div>
             </div>
 

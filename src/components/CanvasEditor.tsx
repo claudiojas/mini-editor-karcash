@@ -248,7 +248,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
         // 3. Abaixo da Fipe (Box Neon)
         // Espaço abaixo do valor KarCash
-        const economy = state.data.fipePrice - state.data.salePrice;
+        const economy = state.data.economyPrice; // Valor manual
         // Sempre visível
         // karcashY + gap (180 aprox altura texto) + gap extra
         // karcashY + gap (Reduzido proporcionalmente)

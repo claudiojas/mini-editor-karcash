@@ -7,6 +7,7 @@ const INITIAL_DATA: VehicleData = {
     year: new Date().getFullYear().toString(),
     fipePrice: 0,
     salePrice: 0,
+    economyPrice: 0,
 };
 
 const INITIAL_CONFIG: CanvasConfig = {

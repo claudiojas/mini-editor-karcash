@@ -4,6 +4,7 @@ export interface VehicleData {
     year: string;
     fipePrice: number;
     salePrice: number;
+    economyPrice: number; // Novo campo manual
 }
 
 export interface CanvasConfig {
