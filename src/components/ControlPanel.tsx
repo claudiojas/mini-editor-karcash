@@ -40,13 +40,41 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onImageUploa
                 <label className="text-sm font-medium text-gray-400">Zoom: {state.config.zoom.toFixed(1)}x</label>
                 <input
                     type="range"
-                    min="1"
+                    min="0.1"
                     max="3"
-                    step="0.1"
+                    step="0.05"
                     value={state.config.zoom}
                     onChange={(e) => onUpdateConfig('zoom', parseFloat(e.target.value))}
                     className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
                 />
+            </div>
+
+            {/* Position Controls */}
+            <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-400">Posição X: {state.config.pan.x}px</label>
+                    <input
+                        type="range"
+                        min="-1000"
+                        max="1000"
+                        step="10"
+                        value={state.config.pan.x}
+                        onChange={(e) => onUpdateConfig('pan', { ...state.config.pan, x: parseFloat(e.target.value) })}
+                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-400">Posição Y: {state.config.pan.y}px</label>
+                    <input
+                        type="range"
+                        min="-1000"
+                        max="1000"
+                        step="10"
+                        value={state.config.pan.y}
+                        onChange={(e) => onUpdateConfig('pan', { ...state.config.pan, y: parseFloat(e.target.value) })}
+                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                </div>
             </div>
 
             {/* Car Data */}
