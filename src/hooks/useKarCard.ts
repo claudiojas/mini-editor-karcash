@@ -8,15 +8,24 @@ const INITIAL_DATA: VehicleData = {
     fipePrice: 0,
     salePrice: 0,
     economyPrice: 0,
+    detailsText: 'Configurações',
 };
 
 const INITIAL_CONFIG: CanvasConfig = {
     zoom: 1,
     pan: { x: 0, y: 0 },
     overlayOpacity: 1,
-    modelFontSize: 110,
+
+    brand: { fontSize: 50, offsetX: 0, offsetY: 0 },
+    model: { fontSize: 110, offsetX: 0, offsetY: 0 },
+    details: { fontSize: 50, offsetX: 0, offsetY: 0 },
+    year: { fontSize: 50, offsetX: 0, offsetY: 0 },
+    price: { fontSize: 120, offsetX: 0, offsetY: 0 },
+    fipe: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 100, color: '#FFFFFF' },
+    economy: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 100, color: '#CCFF00' },
+
+    // Manter por compatibilidade se algo quebrar, mas idealmente remover
     salePriceFontSize: 120,
-    detailsOffsetY: 0,
 };
 
 export function useKarCard() {
@@ -38,8 +47,22 @@ export function useKarCard() {
         setData((prev) => ({ ...prev, [field]: value }));
     };
 
+    // Suporta atualização direta ou aninhada (ex: 'brand', { fontSize: 60 })
     const updateConfig = (field: keyof CanvasConfig, value: any) => {
-        setConfig((prev) => ({ ...prev, [field]: value }));
+        setConfig((prev) => {
+            // Se o valor for um objeto parcial de uma propriedade existente (ex: atualizar só fontSize de brand)
+            if (typeof value === 'object' && value !== null && !Array.isArray(value) && typeof prev[field] === 'object') {
+                return {
+                    ...prev,
+                    [field]: {
+                        ...prev[field] as any, // Cast necessário pois TS não sabe profundidade
+                        ...value
+                    }
+                };
+            }
+
+            return { ...prev, [field]: value };
+        });
     };
 
     return {

@@ -5,15 +5,35 @@ export interface VehicleData {
     fipePrice: number;
     salePrice: number;
     economyPrice: number; // Novo campo manual
+    detailsText?: string; // Novo: Texto customizável para configurações
+}
+
+export interface ItemConfig {
+    fontSize: number;
+    offsetX: number;
+    offsetY: number;
+    align?: 'left' | 'center' | 'right';
+    width?: number; // Novo: Largura (para boxes)
+    height?: number; // Novo: Altura (para boxes)
+    color?: string; // Novo: Cor de fundo (para boxes)
 }
 
 export interface CanvasConfig {
     zoom: number;
     pan: { x: number; y: number };
     overlayOpacity: number;
-    modelFontSize: number;
-    salePriceFontSize: number; // Novo campo
-    detailsOffsetY: number; // Offset vertical
+
+    // Elementos Individuais
+    brand: ItemConfig;
+    model: ItemConfig;
+    details: ItemConfig;
+    year: ItemConfig;
+    price: ItemConfig; // Valor KarCash
+    fipe: ItemConfig; // Novo: Tabela Fipe Box
+    economy: ItemConfig; // Novo: Abaixo da Fipe Box
+
+    // Legado ou Específico (ainda úteis?)
+    salePriceFontSize?: number; // Depreciar em favor de price.fontSize se possível, mas manter compatibilidade por enquanto
 }
 
 export interface KarCardState {

@@ -126,23 +126,32 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
         // 1. Marca (Badge Neon com texto preto)
         const marcaText = (state.data.brand || 'MARCA').toUpperCase();
-        ctx.font = 'bold 50px Ubuntu, sans-serif';
+
+        // Configuração Granular
+        const { fontSize: brandSize, offsetX: brandX, offsetY: brandY } = state.config.brand;
+        const brandFinalY = TOP_CONTENT + brandY;
+        const brandFinalX = LEFT_ALIGN + brandX;
+
+        ctx.font = `bold ${brandSize}px Montserrat, sans-serif`;
         const marcaWidth = ctx.measureText(marcaText).width + 60; // Padding
 
         ctx.fillStyle = COLOR_NEON;
-        ctx.fillRect(LEFT_ALIGN, TOP_CONTENT, marcaWidth, 80);
+        // Desenhar retângulo ajustado ao novo Y e altura da fonte
+        const brandRectHeight = brandSize + 30; // Altura proporcional
+        ctx.fillRect(brandFinalX, brandFinalY, marcaWidth, brandRectHeight);
 
         ctx.fillStyle = COLOR_BLACK;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(marcaText, LEFT_ALIGN + 30, TOP_CONTENT + 40);
+        // Centralizar texto no retângulo
+        ctx.fillText(marcaText, brandFinalX + 30, brandFinalY + (brandRectHeight / 2));
 
         // 2. Modelo (Texto Gigante Neon)
         const modeloText = (state.data.model || 'MODELO').toUpperCase();
 
         // Tamanho da fonte dinâmico
-        const fontSize = state.config.modelFontSize || 110;
-        ctx.font = `900 ${fontSize}px Ubuntu, sans-serif`;
+        const { fontSize: modelSize, offsetX: modelX, offsetY: modelY } = state.config.model;
+        ctx.font = `900 ${modelSize}px Montserrat, sans-serif`;
 
         ctx.fillStyle = COLOR_NEON;
         ctx.textAlign = 'left';
@@ -151,17 +160,19 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const maxWidth = 550; // Metade da tela aprox
         const words = modeloText.split(' ');
         let line = '';
-        let y = TOP_CONTENT + 100;
+
+        let y = TOP_CONTENT + 100 + modelY;
+        const finalModelX = LEFT_ALIGN + modelX;
 
         // Lógica básica de multiline
-        const lineHeight = fontSize * 1.0; // Altura da linha proporcional
+        const lineHeight = modelSize * 1.0; // Altura da linha proporcional
 
         for (let n = 0; n < words.length; n++) {
             const testLine = line + words[n] + ' ';
             const metrics = ctx.measureText(testLine);
             const testWidth = metrics.width;
             if (testWidth > maxWidth && n > 0) {
-                ctx.fillText(line, LEFT_ALIGN, y);
+                ctx.fillText(line, finalModelX, y);
                 line = words[n] + ' ';
                 y += lineHeight;
             }
@@ -169,22 +180,42 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
                 line = testLine;
             }
         }
-        ctx.fillText(line, LEFT_ALIGN, y);
+        ctx.fillText(line, finalModelX, y);
 
-        // Ajustar Y para os proximos elementos baseados na altura do modelo + Offset Manual
-        const detailsOffset = state.config.detailsOffsetY || 0;
-        let currentY = y + 120 + detailsOffset;
+        // Ajustar Y para os proximos elementos
+        // "state.config.model.offsetY" já foi usando no 'y' inicial do loop
+        // "state.config.model.offsetX" precisa ser aplicado no fillText
 
         // 3. Versão/Configurações (Texto Branco)
-        ctx.font = '50px Ubuntu, sans-serif';
+        const detailsText = state.data.detailsText || "Configurações";
+        const { fontSize: detSize, offsetX: detX, offsetY: detY } = state.config.details;
+
+        const detailsFinalY = y + 120 + detY;
+        const detailsFinalX = LEFT_ALIGN + detX;
+
+        ctx.font = `${detSize}px Montserrat, sans-serif`;
         ctx.fillStyle = COLOR_WHITE;
-        ctx.fillText("Configurações", LEFT_ALIGN, currentY);
+
+        // Suporte a Multi-linhas (quebra manual \n ou automática se implementar depois)
+        const detailLines = detailsText.split('\n');
+        const detailLineHeight = detSize * 1.2;
+
+        detailLines.forEach((line, index) => {
+            ctx.fillText(line, detailsFinalX, detailsFinalY + (index * detailLineHeight));
+        });
 
         // 4. Ano (Texto Neon Pequeno)
         const anoText = (state.data.year || 'ANO');
-        ctx.font = 'bold 50px Ubuntu, sans-serif';
+        const { fontSize: yearSize, offsetX: yearX, offsetY: yearY } = state.config.year;
+
+        // Ajustar posição do Ano baseado na altura real dos detalhes
+        const detailsBlockHeight = detailLines.length * detailLineHeight;
+        const yearFinalY = detailsFinalY + detailsBlockHeight + 40 + yearY; // 40px de gap
+        const yearFinalX = LEFT_ALIGN + yearX;
+
+        ctx.font = `bold ${yearSize}px Montserrat, sans-serif`;
         ctx.fillStyle = COLOR_NEON;
-        ctx.fillText(anoText, LEFT_ALIGN, currentY + 70);
+        ctx.fillText(anoText, yearFinalX, yearFinalY);
 
 
         // --- Direita: Preços ---
@@ -192,52 +223,51 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         // Ajuste fino de posicionamento baseado no Template Story Padrão
         const RIGHT_COLUMN_TOP = layout.rightColumnTop; // Dinâmico
 
-        const drawPriceBox = (label: string, value: number, y: number, type: 'fipe' | 'economy') => {
-            // Dimensões exatas do "quadrado" (retângulo)
-            const boxWidth = 320;
-            const boxHeight = 100;
-            const boxX = RIGHT_COLUMN_X - boxWidth;
+        const drawPriceBox = (label: string, value: number, config: ItemConfig, type: 'fipe' | 'economy') => {
+            // Dimensões e Cores das Configurações
+            const { width = 320, height = 100, color = (type === 'fipe' ? COLOR_WHITE : COLOR_NEON), offsetX, offsetY, fontSize } = config;
 
-            // Cores
-            const bgColor = type === 'fipe' ? COLOR_WHITE : COLOR_NEON;
+            // Posição baseada no RIGHT_COLUMN_TOP + offsetY
+            // Mas para dar liberdade total, vamos usar RIGHT_COLUMN_X como âncora horizontal também
+            const boxX = (RIGHT_COLUMN_X - width) + offsetX;
+            const boxY = (type === 'fipe' ? RIGHT_COLUMN_TOP : (RIGHT_COLUMN_TOP + 300)) + offsetY; // Base Y diferente inicial para não sobrepor, mas ajustável
+
+            const bgColor = color;
             const textColor = COLOR_BLACK;
 
             // Desenhar Box
             ctx.fillStyle = bgColor;
-            ctx.fillRect(boxX, y, boxWidth, boxHeight);
+            ctx.fillRect(boxX, boxY, width, height);
 
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'right';
 
-            // Label "TABELA FIPE:" ou "ABAIXO DA FIPE:"
-            // No modelo: Pequeno, Bold, alinhado à direita, cor preta
+            // Label "TABELA FIPE:"
             ctx.fillStyle = textColor;
-            ctx.font = 'bold 22px Ubuntu, sans-serif';
-            ctx.fillText(label, RIGHT_COLUMN_X - 25, y + 25);
+            ctx.font = `bold ${Math.round(fontSize)}px Montserrat, sans-serif`;
+            ctx.fillText(label, boxX + width - 25, boxY + 25);
 
             // Valor "R$ XX.XXX"
-            // Separar R$ do valor para tamanhos diferentes
             const priceValue = value.toLocaleString('pt-BR');
             const currencySym = 'R$';
 
             ctx.fillStyle = textColor;
 
-            // 1. Renderizar Valor Numérico (Grande)
-            ctx.font = '900 65px Ubuntu, sans-serif';
-            const valX = RIGHT_COLUMN_X - 20;
-            const valY = y + 65;
+            // 1. Valor Numérico (Grande - Proporcional ao box ou config?)
+            // Vamos usar o dobro do fontSize da label como base, ou fixo por enquanto
+            ctx.font = `900 ${Math.round(fontSize * 3)}px Montserrat, sans-serif`;
+            const valX = boxX + width - 20;
+            const valY = boxY + 65;
             ctx.fillText(priceValue, valX, valY);
 
-            // 2. Renderizar R$ (Pequeno)
+            // 2. Símbolo R$
             const valMetrics = ctx.measureText(priceValue);
-            ctx.font = 'bold 30px Ubuntu, sans-serif';
-            ctx.fillText(currencySym, valX - valMetrics.width - 10, valY + 2); // Leve ajuste Y para alinhar visualmente
+            ctx.font = `bold ${Math.round(fontSize * 1.3)}px Montserrat, sans-serif`;
+            ctx.fillText(currencySym, valX - valMetrics.width - 10, valY + 2);
         };
 
-        // 1. Tabela Fipe (Box Branca)
-        // 1. Tabela Fipe (Box Branca)
-        // Sempre visível
-        drawPriceBox("TABELA FIPE:", state.data.fipePrice, RIGHT_COLUMN_TOP, 'fipe');
+        // 1. Tabela Fipe (Box Configurável)
+        drawPriceBox("TABELA FIPE:", state.data.fipePrice, state.config.fipe, 'fipe');
 
         // 2. Preço KarCash (Sem box, gigante, Neon)
         // No modelo, o valor KarCash fica bem no meio, entre Fipe e Abaixo da Fipe
@@ -250,7 +280,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
         // Label "KARCASH:" (Branca, pequena)
         ctx.fillStyle = COLOR_WHITE;
-        ctx.font = 'bold 30px Ubuntu, sans-serif';
+        ctx.font = 'bold 30px Montserrat, sans-serif';
         ctx.fillText("KARCASH:", RIGHT_COLUMN_X, karcashY);
 
         // Valor Gigante Neon
@@ -260,34 +290,29 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const kValue = state.data.salePrice.toLocaleString('pt-BR');
         const kSym = 'R$';
 
-        // Tamanho Dinâmico
-        const kFontSize = state.config.salePriceFontSize || 120;
+        // Tamanho Dinâmico Configurado
+        const { fontSize: priceSize, offsetX: priceX, offsetY: priceY } = state.config.price; // usando 'price' em vez de salePriceFontSize
+        const finalPriceX = RIGHT_COLUMN_X + priceX;
+        const finalPriceY = karcashY + 43 + priceY;
 
         // 1. Valor Numérico
-        ctx.font = `900 ${kFontSize}px Ubuntu, sans-serif`;
-        const kY = karcashY + 43;
-        ctx.fillText(kValue, RIGHT_COLUMN_X, kY);
+        ctx.font = `900 ${priceSize}px Montserrat, sans-serif`;
+        ctx.fillText(kValue, finalPriceX, finalPriceY);
 
         // 2. Símbolo R$ (Menor e Proporcional)
         // Antes: 120px valor -> 50px R$ (aprox 0.42)
-        const symFontSize = Math.round(kFontSize * 0.42);
+        const symFontSize = Math.round(priceSize * 0.42);
 
         const kMetrics = ctx.measureText(kValue);
-        ctx.font = `bold ${symFontSize}px Ubuntu, sans-serif`;
-        // Ajuste Y do símbolo era +50 fixo
-        // Se 120 -> 50, então offset aprox 0.4 * FontSize
-        const symYOffset = kFontSize * 0.42;
+        ctx.font = `bold ${symFontSize}px Montserrat, sans-serif`;
+        // Ajuste Y do símbolo
+        const symYOffset = priceSize * 0.42;
 
-        ctx.fillText(kSym, RIGHT_COLUMN_X - kMetrics.width - 15, kY + symYOffset);
+        ctx.fillText(kSym, finalPriceX - kMetrics.width - 15, finalPriceY + symYOffset - priceSize + symFontSize); // Ajuste fino
 
-        // 3. Abaixo da Fipe (Box Neon)
-        // Espaço abaixo do valor KarCash
-        const economy = state.data.economyPrice; // Valor manual
-        // Sempre visível
-        // karcashY + gap (180 aprox altura texto) + gap extra
-        // karcashY + gap (Reduzido proporcionalmente)
-        const economyY = karcashY + 180;
-        drawPriceBox("ABAIXO DA FIPE:", economy, economyY, 'economy');
+        // 3. Abaixo da Fipe (Box Configurável)
+        const economy = state.data.economyPrice;
+        drawPriceBox("ABAIXO DA FIPE:", economy, state.config.economy, 'economy');
     };
 
     return (
