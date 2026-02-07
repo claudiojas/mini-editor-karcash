@@ -255,6 +255,64 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                         <ItemControl label="Modelo" config={state.config.model} onChange={(k, v) => onUpdateConfig('model', { [k]: v })} />
                         <ItemControl label="Detalhes" config={state.config.details} onChange={(k, v) => onUpdateConfig('details', { [k]: v })} />
                         <ItemControl label="Ano" config={state.config.year} onChange={(k, v) => onUpdateConfig('year', { [k]: v })} />
+
+                        {/* Custom Control for Logo Image */}
+                        <div className="bg-gray-800 p-3 rounded mb-3 border border-gray-700">
+                            <h4 className="text-neon-green font-bold text-sm mb-2 uppercase">Logo (Imagem)</h4>
+                            <div className="grid grid-cols-2 gap-2">
+                                <div className="col-span-2">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <label className="text-gray-400 text-xs">Largura</label>
+                                        <input
+                                            type="number"
+                                            value={state.config.logoImage?.width || 200}
+                                            onChange={(e) => onUpdateConfig('logoImage', { width: Number(e.target.value) })}
+                                            className="w-20 bg-gray-900 border border-gray-600 rounded px-2 py-0.5 text-white text-xs text-right"
+                                        />
+                                    </div>
+                                    <input
+                                        type="range" min="50" max="600"
+                                        value={state.config.logoImage?.width || 200}
+                                        onChange={(e) => onUpdateConfig('logoImage', { width: Number(e.target.value) })}
+                                        className="w-full accent-neon-green"
+                                    />
+                                </div>
+                                <div>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <label className="text-gray-400 text-xs">Pos X</label>
+                                        <input
+                                            type="number"
+                                            value={state.config.logoImage?.offsetX || 0}
+                                            onChange={(e) => onUpdateConfig('logoImage', { offsetX: Number(e.target.value) })}
+                                            className="w-16 bg-gray-900 border border-gray-600 rounded px-1 py-0.5 text-white text-xs text-right"
+                                        />
+                                    </div>
+                                    <input
+                                        type="range" min="-500" max="500"
+                                        value={state.config.logoImage?.offsetX || 0}
+                                        onChange={(e) => onUpdateConfig('logoImage', { offsetX: Number(e.target.value) })}
+                                        className="w-full accent-neon-green"
+                                    />
+                                </div>
+                                <div>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <label className="text-gray-400 text-xs">Pos Y</label>
+                                        <input
+                                            type="number"
+                                            value={state.config.logoImage?.offsetY || 0}
+                                            onChange={(e) => onUpdateConfig('logoImage', { offsetY: Number(e.target.value) })}
+                                            className="w-16 bg-gray-900 border border-gray-600 rounded px-1 py-0.5 text-white text-xs text-right"
+                                        />
+                                    </div>
+                                    <input
+                                        type="range" min="-500" max="500"
+                                        value={state.config.logoImage?.offsetY || 0}
+                                        onChange={(e) => onUpdateConfig('logoImage', { offsetY: Number(e.target.value) })}
+                                        className="w-full accent-neon-green"
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
 

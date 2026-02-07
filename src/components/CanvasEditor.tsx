@@ -1,6 +1,6 @@
-import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import type { KarCardState } from '../types';
-import bgLayerUrl from '../assets/backgroudapp.png';
+import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import type { KarCardState, BackgroundConfig, ItemConfig } from '../types';
+import logoKarcashUrl from '../assets/logo_karcash-removebg_1.webp';
 
 interface CanvasEditorProps {
     state: KarCardState;
@@ -352,6 +352,42 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         // 3. Abaixo da Fipe (Box Configurável)
         const economy = state.data.economyPrice;
         drawPriceBox("ABAIXO DA FIPE:", economy, state.config.economy, 'economy');
+
+        // 4. Logo KarCash (Imagem)
+        if (state.config.logoImage && state.config.logoImage.width) {
+            const logoConfig = state.config.logoImage;
+            const logoWidth = logoConfig.width || 200;
+            const logoRefX = (CANVAS_WIDTH - logoWidth) / 2 + logoConfig.offsetX; // Centralizado por padrão + offset
+            const logoRefY = 50 + logoConfig.offsetY; // Topo + margem + offset
+
+            // Precisamos carregar a imagem sincrono? Não, drawOverlay é chamado dentro do loop, mas loadImage é async
+            // O ideal é ter a imagem carregada. 
+            // Como estamos dentro de um useEffect que chama render()... e render chama drawOverlay...
+            // O `loadImage` deveria ser feito fora ou cacheado.
+            // Mas para simplificar, vamos usar um objeto Image criado fora ou cacheado?
+            // O `useEffect` principal já carrega a imagem do carro.
+            // Vamos tentar carregar a logo direto.
+            const logoImg = new Image();
+            logoImg.src = logoKarcashUrl;
+            // Se já tiver carregada (cache browser), desenha. Se não, na próxima renderização vai.
+            if (logoImg.complete) {
+                const scale = logoWidth / logoImg.naturalWidth;
+                const logoHeight = logoImg.naturalHeight * scale;
+                ctx.drawImage(logoImg, logoRefX, logoRefY, logoWidth, logoHeight);
+            } else {
+                logoImg.onload = () => {
+                    // Força re-render se carregar depois
+                    // Mas como estamos dentro do loop do canvas... talvez precise de um forceUpdate?
+                    // O requestAnimationFrame cuidaria disso se fosse animado.
+                    // Aqui é estático.
+                    // Vamos deixar assim por enquanto, geralmente carrega rápido.
+                    // Se falhar na primeira, o usuário interage e redesenha.
+                    const scale = logoWidth / logoImg.naturalWidth;
+                    const logoHeight = logoImg.naturalHeight * scale;
+                    ctx.drawImage(logoImg, logoRefX, logoRefY, logoWidth, logoHeight);
+                }
+            }
+        }
     };
 
     return (

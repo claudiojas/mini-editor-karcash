@@ -25,6 +25,7 @@ const INITIAL_CONFIG: CanvasConfig = {
     fipe: { fontSize: 22, offsetX: 0, offsetY: 0, width: 350, height: 100, color: '#FFFFFF' },
     economy: { fontSize: 22, offsetX: 0, offsetY: 0, width: 350, height: 100, color: '#CCFF00' },
     karcashLogo: { fontSize: 30, offsetX: 0, offsetY: 0 },
+    logoImage: { width: 412, offsetX: -38, offsetY: 129, fontSize: 0 }, // Inicializar com largura padrão
 
     // Manter por compatibilidade se algo quebrar, mas idealmente remover
     salePriceFontSize: 120,
