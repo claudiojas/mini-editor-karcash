@@ -1,5 +1,5 @@
 import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import type { KarCardState, BackgroundConfig, ItemConfig } from '../types';
+import type { KarCardState, ItemConfig } from '../types';
 import logoKarcashUrl from '../assets/logo_karcash-removebg_1.webp';
 
 interface CanvasEditorProps {
