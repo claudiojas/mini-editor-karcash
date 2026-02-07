@@ -15,7 +15,9 @@ function App() {
     updateConfig,
     discountPercentage,
     format,
-    setFormat
+    setFormat,
+    background,
+    setBackground
   } = useKarCard();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,10 +36,11 @@ function App() {
       {/* Sidebar de Controles */}
       <aside className="w-full md:w-[400px] shrink-0 h-auto md:h-full border-t md:border-t-0 md:border-r border-gray-800 bg-gray-900 z-10 shadow-xl md:overflow-y-auto">
         <ControlPanel
-          state={{ image, data, config, format }}
+          state={{ image, data, config, format, background }}
           onUpdateData={updateData}
           onUpdateConfig={updateConfig}
-          onUpdateFormat={setFormat} // Passando o handler
+          onUpdateFormat={setFormat}
+          onUpdateBackground={setBackground}
           onImageUpload={handleImageUpload}
           onDownload={handleDownload}
         />
@@ -59,7 +62,7 @@ function App() {
 
           <CanvasEditor
             ref={canvasRef}
-            state={{ image, data, config, format }}
+            state={{ image, data, config, format, background }}
             discountPercentage={discountPercentage}
           />
           <p className="text-gray-500 text-sm">

@@ -73,11 +73,46 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
             // 2. Carregar Background Template
+            // 2. Carregar Background Template
             try {
-                const bgImg = await loadImage(bgLayerUrl);
-                ctx.drawImage(bgImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                if (state.background.type === 'image') {
+                    const bgImg = await loadImage(state.background.value);
+                    ctx.drawImage(bgImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                } else if (state.background.type === 'solid') {
+                    ctx.fillStyle = state.background.value;
+                    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                } else if (state.background.type === 'gradient' && state.background.gradient) {
+                    const { colors, direction } = state.background.gradient;
+
+                    // Converter graus para radianos (ajustando para que 0 seja Top-to-Bottom ou intuitivo)
+                    // CSS: 180deg = Top to Bottom. Vamos alinhar: 90deg = Left to Right.
+                    // Math: 0 = Right. 
+                    // Vamos usar: Angle - 90 graus para alinhar com sliders CSS padrão?
+                    // Simples: angle em radianos.
+                    const angleRad = (direction - 90) * (Math.PI / 180);
+
+                    const cx = CANVAS_WIDTH / 2;
+                    const cy = CANVAS_HEIGHT / 2;
+                    const diag = Math.sqrt(CANVAS_WIDTH ** 2 + CANVAS_HEIGHT ** 2) / 2;
+
+                    // Calcular pontos start/end baseados no angulo
+                    const x0 = cx + Math.cos(angleRad + Math.PI) * diag;
+                    const y0 = cy + Math.sin(angleRad + Math.PI) * diag;
+                    const x1 = cx + Math.cos(angleRad) * diag;
+                    const y1 = cy + Math.sin(angleRad) * diag;
+
+                    const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+                    gradient.addColorStop(0, colors[0]);
+                    gradient.addColorStop(1, colors[1]);
+
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                }
             } catch (e) {
                 console.error("Erro ao carregar background", e);
+                // Fallback
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             }
 
             // 3. Imagem do Veículo

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import type { KarCardState, ItemConfig } from '../types';
+import type { KarCardState, ItemConfig, BackgroundConfig } from '../types';
+import bgLayerUrl from '../assets/backgroudapp.png'; // Importar para restaurar padrão
 
 interface ControlPanelProps {
     state: KarCardState;
     onUpdateData: (field: any, value: any) => void;
     onUpdateConfig: (field: any, value: any) => void;
     onUpdateFormat: (format: 'story' | 'feed') => void;
+    onUpdateBackground: (bg: BackgroundConfig) => void;
     onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onDownload: () => void;
 }
@@ -86,13 +88,14 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
     </div>
 );
 
-export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateFormat, onImageUpload, onDownload }: ControlPanelProps) {
-    const [activeTab, setActiveTab] = useState<'data' | 'texts' | 'prices'>('data');
+export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateFormat, onUpdateBackground, onImageUpload, onDownload }: ControlPanelProps) {
+    const [activeTab, setActiveTab] = useState<'data' | 'texts' | 'prices' | 'bg'>('data');
 
     const tabs = [
         { id: 'data', label: 'Dados' },
         { id: 'texts', label: 'Textos' },
         { id: 'prices', label: 'Preços' },
+        { id: 'bg', label: 'Fundo' },
     ];
 
     // Helper para atualizar configuração de um item específico
@@ -134,7 +137,7 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id as 'data' | 'texts' | 'prices')}
+                            onClick={() => setActiveTab(tab.id as any)}
                             className={`flex-1 pb-2 text-sm font-medium ${activeTab === tab.id ? 'text-neon-green border-b-2 border-neon-green' : 'text-gray-400'}`}
                         >
                             {tab.label}
@@ -279,6 +282,149 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                             onChange={(k, v) => onUpdateConfig('economy', { [k]: v })}
                             showColor showDimensions
                         />
+                    </div>
+                )}
+
+                {activeTab === 'bg' && (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+
+                        {/* Botão Restaurar Padrão */}
+                        <button
+                            onClick={() => onUpdateBackground({
+                                type: 'image',
+                                value: bgLayerUrl,
+                                gradient: { colors: ['#CCFF00', '#000000'], direction: 180 }
+                            })}
+                            className="w-full bg-gray-800 border border-gray-600 text-gray-300 text-xs font-bold uppercase py-2 rounded hover:bg-gray-700 hover:text-white transition-colors mb-4"
+                        >
+                            Restaurar Padrão
+                        </button>
+
+                        {/* Upload Background Image */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-500 uppercase">Imagem de Fundo</label>
+                            <label className="flex flex-col items-center justify-center w-full h-20 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 hover:border-neon-green transition-colors">
+                                <div className="flex flex-col items-center justify-center pt-2 pb-3">
+                                    <p className="text-xs text-gray-400">Carregar Nova Imagem</p>
+                                </div>
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files?.[0]) {
+                                            const url = URL.createObjectURL(e.target.files[0]);
+                                            onUpdateBackground({
+                                                ...state.background,
+                                                type: 'image',
+                                                value: url
+                                            });
+                                        }
+                                    }}
+                                />
+                            </label>
+                        </div>
+
+                        {/* Solid Color */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-500 uppercase">Cor Sólida</label>
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="color"
+                                    value={state.background.type === 'solid' ? state.background.value : '#000000'}
+                                    onChange={(e) => onUpdateBackground({
+                                        ...state.background,
+                                        type: 'solid',
+                                        value: e.target.value
+                                    })}
+                                    className="w-full h-10 bg-gray-800 border border-gray-600 rounded cursor-pointer"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Gradients */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-500 uppercase">Gradientes</label>
+
+                            {/* Presets */}
+                            <div className="grid grid-cols-2 gap-2 mb-4">
+                                <button
+                                    onClick={() => onUpdateBackground({
+                                        type: 'gradient',
+                                        value: '',
+                                        gradient: { colors: ['#CCFF00', '#000000'], direction: 180 }
+                                    })}
+                                    className="h-10 rounded border border-gray-600 hover:border-neon-green transition-all"
+                                    style={{ background: 'linear-gradient(180deg, #CCFF00, #000000)' }}
+                                    title="Neon para Preto"
+                                />
+                                <button
+                                    onClick={() => onUpdateBackground({
+                                        type: 'gradient',
+                                        value: '',
+                                        gradient: { colors: ['#333333', '#000000'], direction: 180 }
+                                    })}
+                                    className="h-10 rounded border border-gray-600 hover:border-neon-green transition-all"
+                                    style={{ background: 'linear-gradient(180deg, #333333, #000000)' }}
+                                    title="Cinza Industrial"
+                                />
+                            </div>
+
+                            {/* Controles de Gradiente (Só aparecem se tipo for gradiente ou se usuário quiser editar) */}
+                            {state.background.type === 'gradient' && state.background.gradient && (
+                                <div className="bg-gray-800 p-3 rounded border border-gray-700 space-y-3">
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label className="text-[10px] text-gray-400 block mb-1">Cor Inicial</label>
+                                            <input
+                                                type="color"
+                                                value={state.background.gradient.colors[0]}
+                                                onChange={(e) => {
+                                                    if (!state.background.gradient) return;
+                                                    const newColors: [string, string] = [e.target.value, state.background.gradient.colors[1]];
+                                                    onUpdateBackground({
+                                                        ...state.background,
+                                                        gradient: { ...state.background.gradient, colors: newColors }
+                                                    });
+                                                }}
+                                                className="w-full h-8 bg-gray-900 border border-gray-600 rounded cursor-pointer"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] text-gray-400 block mb-1">Cor Final</label>
+                                            <input
+                                                type="color"
+                                                value={state.background.gradient.colors[1]}
+                                                onChange={(e) => {
+                                                    if (!state.background.gradient) return;
+                                                    const newColors: [string, string] = [state.background.gradient.colors[0], e.target.value];
+                                                    onUpdateBackground({
+                                                        ...state.background,
+                                                        gradient: { ...state.background.gradient, colors: newColors }
+                                                    });
+                                                }}
+                                                className="w-full h-8 bg-gray-900 border border-gray-600 rounded cursor-pointer"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] text-gray-400 block mb-1">Direção ({state.background.gradient.direction}°)</label>
+                                        <input
+                                            type="range" min="0" max="360"
+                                            value={state.background.gradient.direction}
+                                            onChange={(e) => {
+                                                if (!state.background.gradient) return;
+                                                onUpdateBackground({
+                                                    ...state.background,
+                                                    gradient: { ...state.background.gradient, direction: Number(e.target.value) }
+                                                });
+                                            }}
+                                            className="w-full accent-neon-green"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
 

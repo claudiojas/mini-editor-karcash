@@ -37,9 +37,19 @@ export interface CanvasConfig {
     salePriceFontSize?: number; // Depreciar em favor de price.fontSize se possível, mas manter compatibilidade por enquanto
 }
 
+export interface BackgroundConfig {
+    type: 'image' | 'solid' | 'gradient';
+    value: string; // URL da imagem ou Cor Sólida
+    gradient?: {
+        colors: [string, string];
+        direction: number; // graus (0-360)
+    };
+}
+
 export interface KarCardState {
-    image: string | null; // URL da imagem carregada
+    image: string | null; // URL da imagem carregada (Carro)
     data: VehicleData;
     config: CanvasConfig;
-    format: 'story' | 'feed'; // Novo campo de formato
+    background: BackgroundConfig; // Novo: Configuração de fundo
+    format: 'story' | 'feed';
 }

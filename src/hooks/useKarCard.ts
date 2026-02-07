@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import type { VehicleData, CanvasConfig } from '../types';
+import type { VehicleData, CanvasConfig, BackgroundConfig } from '../types';
+import bgLayerUrl from '../assets/backgroudapp.png'; // Importar default aqui também se precisar/ou manter só no hook
 
 const INITIAL_DATA: VehicleData = {
     brand: '',
@@ -33,6 +34,11 @@ export function useKarCard() {
     const [image, setImage] = useState<string | null>(null);
     const [data, setData] = useState<VehicleData>(INITIAL_DATA);
     const [config, setConfig] = useState<CanvasConfig>(INITIAL_CONFIG);
+    const [background, setBackground] = useState<BackgroundConfig>({
+        type: 'image',
+        value: bgLayerUrl,
+        gradient: { colors: ['#CCFF00', '#000000'], direction: 180 } // Default gradient state
+    });
     const [format, setFormat] = useState<'story' | 'feed'>('story');
 
     const discountPercentage = useMemo(() => {
@@ -74,7 +80,9 @@ export function useKarCard() {
         config,
         updateConfig,
         discountPercentage,
-        format,      // Exportando format
-        setFormat,   // Exportando setFormat
+        format,
+        setFormat,
+        background,
+        setBackground,
     };
 }
