@@ -264,6 +264,11 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                             showColor showDimensions
                         />
                         <ItemControl
+                            label="Logo KarCash"
+                            config={state.config.karcashLogo}
+                            onChange={(k, v) => onUpdateConfig('karcashLogo', { [k]: v })}
+                        />
+                        <ItemControl
                             label="Valor KarCash"
                             config={state.config.price}
                             onChange={(k, v) => onUpdateConfig('price', { [k]: v })}

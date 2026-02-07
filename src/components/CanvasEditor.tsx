@@ -279,9 +279,13 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         ctx.textAlign = 'right';
 
         // Label "KARCASH:" (Branca, pequena)
+        const { fontSize: logoSize, offsetX: logoX, offsetY: logoY } = state.config.karcashLogo;
+        const logoFinalX = RIGHT_COLUMN_X + logoX;
+        const logoFinalY = karcashY + logoY;
+
         ctx.fillStyle = COLOR_WHITE;
-        ctx.font = 'bold 30px Montserrat, sans-serif';
-        ctx.fillText("KARCASH:", RIGHT_COLUMN_X, karcashY);
+        ctx.font = `bold ${logoSize}px Montserrat, sans-serif`;
+        ctx.fillText("KARCASH:", logoFinalX, logoFinalY);
 
         // Valor Gigante Neon
         // Valor Gigante Neon

@@ -31,6 +31,7 @@ export interface CanvasConfig {
     price: ItemConfig; // Valor KarCash
     fipe: ItemConfig; // Novo: Tabela Fipe Box
     economy: ItemConfig; // Novo: Abaixo da Fipe Box
+    karcashLogo: ItemConfig; // Novo: Logo/Texto KarCash
 
     // Legado ou Específico (ainda úteis?)
     salePriceFontSize?: number; // Depreciar em favor de price.fontSize se possível, mas manter compatibilidade por enquanto
