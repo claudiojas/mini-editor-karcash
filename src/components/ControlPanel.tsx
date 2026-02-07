@@ -220,7 +220,7 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                                 <div className="space-y-1">
                                     <label className="text-xs text-gray-500">Valor Fipe</label>
                                     <input
-                                        type="number" placeholder="0,00"
+                                        type="number" placeholder="0,00" step="0.01"
                                         value={state.data.fipePrice || ''} onChange={(e) => onUpdateData('fipePrice', parseFloat(e.target.value))}
                                         className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:border-neon-green focus:outline-none"
                                     />
@@ -228,7 +228,7 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                                 <div className="space-y-1">
                                     <label className="text-xs text-neon-green font-bold">Valor Venda (KarCash)</label>
                                     <input
-                                        type="number" placeholder="0,00"
+                                        type="number" placeholder="0,00" step="0.01"
                                         value={state.data.salePrice || ''} onChange={(e) => onUpdateData('salePrice', parseFloat(e.target.value))}
                                         className="w-full bg-gray-800 border border-neon-green rounded px-3 py-2 text-sm focus:outline-none font-bold text-white shadow-sm shadow-neon-green/20"
                                     />
@@ -236,7 +236,7 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                                 <div className="space-y-1">
                                     <label className="text-xs text-gray-500">Abaixo da Fipe (Manual)</label>
                                     <input
-                                        type="number" placeholder="0,00"
+                                        type="number" placeholder="0,00" step="0.01"
                                         value={state.data.economyPrice || ''} onChange={(e) => onUpdateData('economyPrice', parseFloat(e.target.value))}
                                         className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:border-neon-green focus:outline-none"
                                     />

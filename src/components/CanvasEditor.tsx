@@ -19,7 +19,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         story: {
             width: 1080,
             height: 1920,
-            topContent: 575,
+            topContent: 470,
             rightColumnTop: 470,
         },
         feed: {
@@ -247,8 +247,8 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             ctx.font = `bold ${Math.round(fontSize)}px Montserrat, sans-serif`;
             ctx.fillText(label, boxX + width - 25, boxY + 25);
 
-            // Valor "R$ XX.XXX"
-            const priceValue = value.toLocaleString('pt-BR');
+            // Valor "R$ XX.XXX,XX"
+            const priceValue = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const currencySym = 'R$';
 
             ctx.fillStyle = textColor;
@@ -287,7 +287,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         // Valor Gigante Neon
         ctx.fillStyle = COLOR_NEON;
 
-        const kValue = state.data.salePrice.toLocaleString('pt-BR');
+        const kValue = state.data.salePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const kSym = 'R$';
 
         // Tamanho Dinâmico Configurado

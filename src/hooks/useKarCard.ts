@@ -20,9 +20,9 @@ const INITIAL_CONFIG: CanvasConfig = {
     model: { fontSize: 110, offsetX: 0, offsetY: 0 },
     details: { fontSize: 50, offsetX: 0, offsetY: 0 },
     year: { fontSize: 50, offsetX: 0, offsetY: 0 },
-    price: { fontSize: 120, offsetX: 0, offsetY: 0 },
-    fipe: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 100, color: '#FFFFFF' },
-    economy: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 100, color: '#CCFF00' },
+    price: { fontSize: 92, offsetX: 0, offsetY: 0 },
+    fipe: { fontSize: 22, offsetX: 0, offsetY: 0, width: 350, height: 100, color: '#FFFFFF' },
+    economy: { fontSize: 22, offsetX: 0, offsetY: 0, width: 350, height: 100, color: '#CCFF00' },
 
     // Manter por compatibilidade se algo quebrar, mas idealmente remover
     salePriceFontSize: 120,
