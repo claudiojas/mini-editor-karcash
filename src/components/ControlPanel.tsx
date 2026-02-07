@@ -107,7 +107,7 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
         <div className="flex flex-col h-full bg-gray-900 text-white w-full overflow-hidden">
             <div className="p-4 bg-gray-900 border-b border-gray-800 shrink-0 z-20">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold text-neon-green">Editor KarCard</h2>
+                    <img src="/logo_sec-removebg.webp" alt="Logo Secundária" className="h-10 object-contain mx-auto" />
                 </div>
 
                 {/* Format Switcher */}
