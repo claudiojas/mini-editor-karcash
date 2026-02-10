@@ -176,7 +176,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const brandFinalY = TOP_CONTENT + brandY;
         const brandFinalX = LEFT_ALIGN + brandX;
 
-        ctx.font = `bold ${brandSize}px Montserrat, sans-serif`;
+        ctx.font = `800 ${brandSize}px Archivo, sans-serif`;
         const marcaWidth = ctx.measureText(marcaText).width + 60; // Padding
 
         ctx.fillStyle = COLOR_NEON;
@@ -195,7 +195,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
         // Tamanho da fonte dinâmico
         const { fontSize: modelSize, offsetX: modelX, offsetY: modelY } = state.config.model;
-        ctx.font = `900 ${modelSize}px Montserrat, sans-serif`;
+        ctx.font = `900 ${modelSize}px Archivo, sans-serif`;
 
         ctx.fillStyle = COLOR_NEON;
         ctx.textAlign = 'left';
@@ -324,7 +324,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const logoFinalY = karcashY + logoY;
 
         ctx.fillStyle = COLOR_WHITE;
-        ctx.font = `bold ${logoSize}px Montserrat, sans-serif`;
+        ctx.font = `800 ${logoSize}px Archivo, sans-serif`;
         ctx.fillText("KARCASH:", logoFinalX, logoFinalY);
 
         // Valor Gigante Neon
