@@ -13,6 +13,8 @@ export interface CanvasEditorRef {
 
 export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ state, discountPercentage }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const imageCache = useRef<Record<string, HTMLImageElement>>({});
+    const renderInProgress = useRef(false);
 
     // Configuração de Layouts
     const LAYOUTS = {
@@ -51,96 +53,92 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         }
     }));
 
-    const loadImage = (src: string): Promise<HTMLImageElement> => {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.src = src;
-            img.onload = () => resolve(img);
-            img.onerror = (err) => reject(err);
-        });
+    const getCachedImage = (src: string): HTMLImageElement | null => {
+        if (imageCache.current[src]) return imageCache.current[src];
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = src;
+        img.onload = () => {
+            imageCache.current[src] = img;
+            triggerRender();
+        };
+        return null;
     };
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
+    const triggerRender = () => {
+        if (renderInProgress.current) return;
+        renderInProgress.current = true;
 
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        requestAnimationFrame(() => {
+            const canvas = canvasRef.current;
+            if (!canvas) {
+                renderInProgress.current = false;
+                return;
+            }
 
-        const render = async () => {
-            // 1. Limpar canvas
-            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            const ctx = canvas.getContext('2d', { alpha: false }); // alpha false para performance se não precisar de transparência no canvas principal
+            if (!ctx) {
+                renderInProgress.current = false;
+                return;
+            }
 
-            // 2. Carregar Background Template
-            // 2. Carregar Background Template
-            try {
-                if (state.background.type === 'image') {
-                    const bgImg = await loadImage(state.background.value);
-                    ctx.drawImage(bgImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-                } else if (state.background.type === 'solid') {
-                    ctx.fillStyle = state.background.value;
-                    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-                } else if (state.background.type === 'gradient' && state.background.gradient) {
-                    const { colors, direction } = state.background.gradient;
+            // 1. Limpar canvas (ou preencher com preto para evitar transparência)
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-                    // Converter graus para radianos (ajustando para que 0 seja Top-to-Bottom ou intuitivo)
-                    // CSS: 180deg = Top to Bottom. Vamos alinhar: 90deg = Left to Right.
-                    // Math: 0 = Right. 
-                    // Vamos usar: Angle - 90 graus para alinhar com sliders CSS padrão?
-                    // Simples: angle em radianos.
-                    const angleRad = (direction - 90) * (Math.PI / 180);
+            // 2. Background Template
+            const bgImg = state.background.type === 'image' ? getCachedImage(state.background.value) : null;
 
-                    const cx = CANVAS_WIDTH / 2;
-                    const cy = CANVAS_HEIGHT / 2;
-                    const diag = Math.sqrt(CANVAS_WIDTH ** 2 + CANVAS_HEIGHT ** 2) / 2;
+            if (state.background.type === 'image' && bgImg) {
+                ctx.drawImage(bgImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            } else if (state.background.type === 'solid') {
+                ctx.fillStyle = state.background.value;
+                ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            } else if (state.background.type === 'gradient' && state.background.gradient) {
+                const { colors, direction } = state.background.gradient;
+                const angleRad = (direction - 90) * (Math.PI / 180);
+                const cx = CANVAS_WIDTH / 2;
+                const cy = CANVAS_HEIGHT / 2;
+                const diag = Math.sqrt(CANVAS_WIDTH ** 2 + CANVAS_HEIGHT ** 2) / 2;
 
-                    // Calcular pontos start/end baseados no angulo
-                    const x0 = cx + Math.cos(angleRad + Math.PI) * diag;
-                    const y0 = cy + Math.sin(angleRad + Math.PI) * diag;
-                    const x1 = cx + Math.cos(angleRad) * diag;
-                    const y1 = cy + Math.sin(angleRad) * diag;
+                const x0 = cx + Math.cos(angleRad + Math.PI) * diag;
+                const y0 = cy + Math.sin(angleRad + Math.PI) * diag;
+                const x1 = cx + Math.cos(angleRad) * diag;
+                const y1 = cy + Math.sin(angleRad) * diag;
 
-                    const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
-                    gradient.addColorStop(0, colors[0]);
-                    gradient.addColorStop(1, colors[1]);
+                const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+                gradient.addColorStop(0, colors[0]);
+                gradient.addColorStop(1, colors[1]);
 
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-                }
-            } catch (e) {
-                console.error("Erro ao carregar background", e);
-                // Fallback
-                ctx.fillStyle = '#000';
+                ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             }
 
             // 3. Imagem do Veículo
             if (state.image) {
-                try {
-                    const userImg = await loadImage(state.image);
-
-                    // Calcular aspecto
+                const userImg = getCachedImage(state.image);
+                if (userImg) {
                     const scale = Math.max(CANVAS_WIDTH / userImg.width, CANVAS_HEIGHT / userImg.height) * state.config.zoom;
-
                     const centerX = (CANVAS_WIDTH - userImg.width * scale) / 2;
                     const centerY = (CANVAS_HEIGHT - userImg.height * scale) / 2;
-
                     const x = centerX + state.config.pan.x;
                     const y = centerY + state.config.pan.y;
 
                     ctx.drawImage(userImg, x, y, userImg.width * scale, userImg.height * scale);
-                } catch (e) {
-                    console.error("Erro ao carregar imagem do veículo", e);
                 }
             }
 
-            // 4. Overlays (Texto e Gradientes Gerados)
+            // 4. Overlays
             drawOverlay(ctx);
-        };
 
-        render();
+            renderInProgress.current = false;
+        });
+    };
 
+    // Efeito para reagir a mudanças de estado e disparar renderização síncrona/otimizada
+    useEffect(() => {
+        triggerRender();
     }, [state, discountPercentage]);
 
     const drawOverlay = (ctx: CanvasRenderingContext2D) => {
