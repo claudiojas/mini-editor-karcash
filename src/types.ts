@@ -50,6 +50,9 @@ export interface BackgroundConfig {
         colors: [string, string];
         direction: number; // graus (0-360)
     };
+    overlayColor?: string; // Novo: Cor da máscara
+    overlayOpacity?: number; // Novo: Opacidade da máscara (0 a 1)
+    rotation?: number; // Novo: Rotação (0 ou 180)
 }
 
 export interface LayoutConfig {

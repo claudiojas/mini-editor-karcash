@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { VehicleData, CanvasConfig, ItemConfig, BackgroundConfig } from '../types';
 import bgLayerUrl from '../assets/backgroudapp.png'; // Importar para restaurar padrão
+import { PREMIUM_BACKGROUNDS, COLORS } from '../hooks/useKarCard';
 
 interface ControlPanelProps {
     state: {
@@ -302,8 +303,8 @@ export function ControlPanel({
                                     onClick={onRemoveBackground}
                                     disabled={isProcessing}
                                     className={`w-full py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 border ${isProcessing
-                                            ? 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
-                                            : 'bg-white text-black border-white hover:bg-neon-green hover:border-neon-green shadow-sm'
+                                        ? 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
+                                        : 'bg-white text-black border-white hover:bg-neon-green hover:border-neon-green shadow-sm'
                                         }`}
                                 >
                                     {isProcessing ? (
@@ -528,136 +529,162 @@ export function ControlPanel({
                 )}
 
                 {activeTab === 'bg' && (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                        <button
-                            onClick={() => onUpdateBackground({
-                                type: 'image',
-                                value: bgLayerUrl,
-                                gradient: { colors: ['#CCFF00', '#000000'], direction: 180 }
-                            })}
-                            className="w-full bg-gray-800 border border-gray-600 text-gray-300 text-xs font-bold uppercase py-2 rounded hover:bg-gray-700 hover:text-white transition-colors mb-4"
-                        >
-                            Restaurar Padrão
-                        </button>
-
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase">Imagem de Fundo</label>
-                            <label className="flex flex-col items-center justify-center w-full h-20 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 hover:border-neon-green transition-colors">
-                                <div className="flex flex-col items-center justify-center pt-2 pb-3">
-                                    <p className="text-xs text-gray-400">Carregar Nova Imagem</p>
-                                </div>
-                                <input
-                                    type="file"
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        if (e.target.files?.[0]) {
-                                            const url = URL.createObjectURL(e.target.files[0]);
-                                            onUpdateBackground({
-                                                ...state.background,
-                                                type: 'image',
-                                                value: url
-                                            });
-                                        }
-                                    }}
-                                />
-                            </label>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase">Cor Sólida</label>
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="color"
-                                    value={state.background.type === 'solid' ? state.background.value : '#000000'}
-                                    onChange={(e) => onUpdateBackground({
+                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300 pb-10">
+                        {/* Background Gallery Section */}
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Galeria Premium</label>
+                                <button
+                                    onClick={() => onUpdateBackground({
                                         ...state.background,
-                                        type: 'solid',
-                                        value: e.target.value
+                                        rotation: state.background.rotation === 180 ? 0 : 180
                                     })}
-                                    className="w-full h-10 bg-gray-800 border border-gray-600 rounded cursor-pointer"
-                                />
+                                    className={`text-[10px] px-2 py-1 rounded border transition-all flex items-center gap-1 ${state.background.rotation === 180
+                                        ? 'bg-neon-green text-black border-neon-green font-bold'
+                                        : 'bg-gray-800 text-gray-400 border-gray-700'
+                                        }`}
+                                >
+                                    🔄 Girar 180°
+                                </button>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-2 overflow-y-auto pr-1">
+                                {PREMIUM_BACKGROUNDS.map((bg) => (
+                                    <button
+                                        key={bg.id}
+                                        onClick={() => onUpdateBackground({
+                                            ...state.background,
+                                            type: 'image',
+                                            value: bg.url
+                                        })}
+                                        className={`relative aspect-[9/16] rounded-md overflow-hidden border-2 transition-all group ${state.background.type === 'image' && state.background.value === bg.url
+                                            ? 'border-neon-green scale-[0.98]'
+                                            : 'border-gray-800 hover:border-gray-600'
+                                            }`}
+                                    >
+                                        <img src={bg.url} alt={bg.name} className="w-full h-full object-cover" />
+                                        <div className="absolute inset-x-0 bottom-0 bg-black/60 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <p className="text-[7px] text-white text-center uppercase truncate px-1">{bg.name}</p>
+                                        </div>
+                                        {state.background.type === 'image' && state.background.value === bg.url && (
+                                            <div className="absolute top-1 right-1 bg-neon-green text-black rounded-full p-0.5">
+                                                <svg className="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                                            </div>
+                                        )}
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase">Gradientes</label>
-                            <div className="grid grid-cols-2 gap-2 mb-4">
-                                <button
-                                    onClick={() => onUpdateBackground({
-                                        type: 'gradient',
-                                        value: '',
-                                        gradient: { colors: ['#CCFF00', '#000000'], direction: 180 }
-                                    })}
-                                    className="h-10 rounded border border-gray-600 hover:border-neon-green transition-all"
-                                    style={{ background: 'linear-gradient(180deg, #CCFF00, #000000)' }}
-                                    title="Neon para Preto"
-                                />
-                                <button
-                                    onClick={() => onUpdateBackground({
-                                        type: 'gradient',
-                                        value: '',
-                                        gradient: { colors: ['#333333', '#000000'], direction: 180 }
-                                    })}
-                                    className="h-10 rounded border border-gray-600 hover:border-neon-green transition-all"
-                                    style={{ background: 'linear-gradient(180deg, #333333, #000000)' }}
-                                    title="Cinza Industrial"
-                                />
-                            </div>
+                        {/* Overlay Mask Section */}
+                        <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700 space-y-4 shadow-inner">
+                            <label className="text-xs font-bold text-neon-green uppercase tracking-widest flex items-center gap-2">
+                                🎭 Máscara Overlay
+                            </label>
 
-                            {state.background.type === 'gradient' && state.background.gradient && (
-                                <div className="bg-gray-800 p-3 rounded border border-gray-700 space-y-3">
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div>
-                                            <label className="text-[10px] text-gray-400 block mb-1">Cor Inicial</label>
-                                            <input
-                                                type="color"
-                                                value={state.background.gradient.colors[0]}
-                                                onChange={(e) => {
-                                                    if (!state.background.gradient) return;
-                                                    const newColors: [string, string] = [e.target.value, state.background.gradient.colors[1]];
-                                                    onUpdateBackground({
-                                                        ...state.background,
-                                                        gradient: { ...state.background.gradient, colors: newColors }
-                                                    });
-                                                }}
-                                                className="w-full h-8 bg-gray-900 border border-gray-600 rounded cursor-pointer"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] text-gray-400 block mb-1">Cor Final</label>
-                                            <input
-                                                type="color"
-                                                value={state.background.gradient.colors[1]}
-                                                onChange={(e) => {
-                                                    if (!state.background.gradient) return;
-                                                    const newColors: [string, string] = [state.background.gradient.colors[0], e.target.value];
-                                                    onUpdateBackground({
-                                                        ...state.background,
-                                                        gradient: { ...state.background.gradient, colors: newColors }
-                                                    });
-                                                }}
-                                                className="w-full h-8 bg-gray-900 border border-gray-600 rounded cursor-pointer"
-                                            />
+                            <div className="space-y-4">
+                                <div>
+                                    <div className="flex justify-between mb-1">
+                                        <label className="text-[10px] text-gray-400">Opacidade (Escurecer)</label>
+                                        <span className="text-[10px] text-neon-green font-mono">{Math.round((state.background.overlayOpacity || 0) * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.01"
+                                        value={state.background.overlayOpacity || 0}
+                                        onChange={(e) => onUpdateBackground({
+                                            ...state.background,
+                                            overlayOpacity: parseFloat(e.target.value)
+                                        })}
+                                        className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] text-gray-400 block">Cor da Máscara</label>
+                                    <div className="flex gap-2 items-center">
+                                        <input
+                                            type="color"
+                                            value={state.background.overlayColor || '#000000'}
+                                            onChange={(e) => onUpdateBackground({
+                                                ...state.background,
+                                                overlayColor: e.target.value
+                                            })}
+                                            className="w-8 h-8 bg-gray-900 border border-gray-600 rounded cursor-pointer shrink-0"
+                                        />
+                                        <div className="flex gap-1 overflow-x-auto pb-1">
+                                            {[COLORS.PRETO_PROFUNDO, COLORS.VERDE_ESCURO, COLORS.VERDE_MUSGO, '#1a1a1a', '#2c3e50'].map(c => (
+                                                <button
+                                                    key={c}
+                                                    onClick={() => onUpdateBackground({ ...state.background, overlayColor: c })}
+                                                    className={`w-5 h-5 rounded-full border border-gray-600 transition-transform hover:scale-110 ${state.background.overlayColor === c ? 'ring-2 ring-neon-green border-white' : ''}`}
+                                                    style={{ backgroundColor: c }}
+                                                />
+                                            ))}
                                         </div>
                                     </div>
-                                    <div>
-                                        <label className="text-[10px] text-gray-400 block mb-1">Direção ({state.background.gradient.direction}°)</label>
-                                        <input
-                                            type="range" min="0" max="360"
-                                            value={state.background.gradient.direction}
-                                            onChange={(e) => {
-                                                if (!state.background.gradient) return;
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Additional Controls */}
+                        <div className="space-y-4 pt-2">
+                            <div className="grid grid-cols-2 gap-2">
+                                <label className="flex flex-col items-center justify-center w-full h-10 border border-gray-700 rounded bg-gray-800 hover:bg-gray-750 cursor-pointer transition-colors">
+                                    <span className="text-[10px] text-gray-400 font-bold uppercase">📂 Personalizar</span>
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            if (e.target.files?.[0]) {
+                                                const url = URL.createObjectURL(e.target.files[0]);
                                                 onUpdateBackground({
                                                     ...state.background,
-                                                    gradient: { ...state.background.gradient, direction: Number(e.target.value) }
+                                                    type: 'image',
+                                                    value: url
                                                 });
-                                            }}
-                                            className="w-full accent-neon-green"
-                                        />
-                                    </div>
+                                            }
+                                        }}
+                                    />
+                                </label>
+                                <button
+                                    onClick={() => onUpdateBackground({
+                                        ...state.background,
+                                        type: 'solid',
+                                        value: COLORS.PRETO_PROFUNDO
+                                    })}
+                                    className="h-10 border border-gray-700 rounded bg-gray-800 hover:bg-gray-750 text-[10px] text-gray-400 font-bold uppercase transition-colors"
+                                >
+                                    🎨 Cor Sólida
+                                </button>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Gradientes KarCash</label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        onClick={() => onUpdateBackground({
+                                            ...state.background,
+                                            type: 'gradient',
+                                            gradient: { colors: [COLORS.VERDE_LIMAO, COLORS.PRETO_PROFUNDO], direction: 180 }
+                                        })}
+                                        className="h-10 rounded border border-gray-600 hover:border-neon-green transition-all"
+                                        style={{ background: `linear-gradient(180deg, ${COLORS.VERDE_LIMAO}, ${COLORS.PRETO_PROFUNDO})` }}
+                                    />
+                                    <button
+                                        onClick={() => onUpdateBackground({
+                                            ...state.background,
+                                            type: 'gradient',
+                                            gradient: { colors: ['#333333', COLORS.PRETO_PROFUNDO], direction: 180 }
+                                        })}
+                                        className="h-10 rounded border border-gray-600 hover:border-neon-green transition-all"
+                                        style={{ background: `linear-gradient(180deg, #333333, ${COLORS.PRETO_PROFUNDO})` }}
+                                    />
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
                 )}

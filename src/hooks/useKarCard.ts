@@ -3,6 +3,34 @@ import { removeBackground } from '@imgly/background-removal';
 import type { VehicleData, CanvasConfig, BackgroundConfig, KarCardState } from '../types';
 import bgLayerUrl from '../assets/backgroudapp.png';
 
+// Importação da Galeria de Fundos Premium
+import bg01 from '../assets/bgs/bg-version01.jpg';
+import bg02 from '../assets/bgs/bg-version02.jpg';
+import bg03 from '../assets/bgs/bg-version03.jpg';
+import bg04 from '../assets/bgs/bg-version04.jpg';
+import bg05 from '../assets/bgs/bg-version05.jpg';
+import bg06 from '../assets/bgs/bg-version06.jpg';
+import bg07 from '../assets/bgs/bg-version07.jpg';
+import bg08 from '../assets/bgs/bg-version08.jpg';
+import bg09 from '../assets/bgs/bg-version09.jpg';
+import bg10 from '../assets/bgs/bg-version10.jpg';
+import bg11 from '../assets/bgs/bg-version11.jpg';
+
+export const PREMIUM_BACKGROUNDS = [
+    { id: 'default', name: 'KarCash Original', url: bgLayerUrl },
+    { id: 'v01', name: 'Industrial 01', url: bg01 },
+    { id: 'v02', name: 'Modern 02', url: bg02 },
+    { id: 'v03', name: 'Studio 03', url: bg03 },
+    { id: 'v04', name: 'Showroom 04', url: bg04 },
+    { id: 'v05', name: 'Luxury 05', url: bg05 },
+    { id: 'v06', name: 'Gravel 06', url: bg06 },
+    { id: 'v07', name: 'Asphalt 07', url: bg07 },
+    { id: 'v08', name: 'Concrete 08', url: bg08 },
+    { id: 'v09', name: 'Exhibition 09', url: bg09 },
+    { id: 'v10', name: 'Prime 10', url: bg10 },
+    { id: 'v11', name: 'Elite 11', url: bg11 },
+];
+
 const STORAGE_KEY = 'karcash_editor_state';
 
 export const COLORS = {
@@ -57,7 +85,10 @@ const DEFAULT_POSTER_CONFIG: CanvasConfig = {
 const DEFAULT_BACKGROUND: BackgroundConfig = {
     type: 'image',
     value: bgLayerUrl,
-    gradient: { colors: [COLORS.VERDE_LIMAO, COLORS.PRETO_PROFUNDO], direction: 180 }
+    gradient: { colors: [COLORS.VERDE_LIMAO, COLORS.PRETO_PROFUNDO], direction: 180 },
+    overlayColor: COLORS.PRETO_PROFUNDO,
+    overlayOpacity: 0,
+    rotation: 0
 };
 
 export function useKarCard() {

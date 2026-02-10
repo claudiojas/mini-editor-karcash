@@ -97,8 +97,18 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             // 2. Background Template
             const bgImg = state.background.type === 'image' ? getCachedImage(state.background.value) : null;
 
+            // Background
             if (state.background.type === 'image' && bgImg) {
-                ctx.drawImage(bgImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                // Background Rotation support
+                if (state.background.rotation === 180) {
+                    ctx.save();
+                    ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+                    ctx.rotate(Math.PI);
+                    ctx.drawImage(bgImg, -CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2, CANVAS_WIDTH, CANVAS_HEIGHT);
+                    ctx.restore();
+                } else {
+                    ctx.drawImage(bgImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                }
             } else if (state.background.type === 'solid') {
                 ctx.fillStyle = state.background.value;
                 ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -120,6 +130,14 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            }
+
+            // MÁSCARA OVERLAY (O toque premium entre o fundo e o conteúdo)
+            if (state.background.overlayOpacity && state.background.overlayOpacity > 0) {
+                ctx.globalAlpha = state.background.overlayOpacity;
+                ctx.fillStyle = state.background.overlayColor || '#000000';
+                ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                ctx.globalAlpha = 1.0;
             }
 
             // 3. Imagem do Veículo
