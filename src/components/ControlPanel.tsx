@@ -20,84 +20,116 @@ interface ItemControlProps {
     showDimensions?: boolean;
 }
 
-const ItemControl = ({ label, config, onChange, showColor = false, showDimensions = false }: ItemControlProps) => (
-    <div className="bg-gray-800 p-3 rounded mb-3 border border-gray-700">
-        <h4 className="text-neon-green font-bold text-sm mb-2 uppercase">{label}</h4>
-        <div className="grid grid-cols-2 gap-2">
-            <div>
-                <label className="text-gray-400 text-xs block mb-1">Tamanho Fonte</label>
-                <input
-                    type="number"
-                    value={config.fontSize}
-                    onChange={(e) => onChange('fontSize', Number(e.target.value))}
-                    className="w-full bg-gray-900 border border-gray-600 rounded px-2 py-1 text-white text-xs"
-                />
-            </div>
-            {showColor && (
+const ItemControl = ({ label, config, onChange, showColor = false, showDimensions = false }: ItemControlProps) => {
+    const handleDimensionChange = (key: 'width' | 'height', value: number) => {
+        const updates: Partial<ItemConfig> = { [key]: value };
+
+        // Lógica de "Sugestão Inteligente" de Tamanho de Fonte para Boxes de Preço
+        // Se estivermos mexendo na largura/altura de um box de preço, sugerimos um novo fontSize
+        if (showDimensions) {
+            const currentWidth = key === 'width' ? value : (config.width || 320);
+            const currentHeight = key === 'height' ? value : (config.height || 110);
+
+            // Baselines (conforme configurado no useKarCard.ts)
+            const BASE_WIDTH = 320;
+            const BASE_HEIGHT = 110;
+            const BASE_FONT = 22;
+            const BASE_GAP = 28;
+
+            // Calculamos o fator de escala baseado na menor proporção (pra não vazar)
+            const scaleFactor = Math.min(currentWidth / BASE_WIDTH, currentHeight / BASE_HEIGHT);
+
+            updates.fontSize = Math.round(BASE_FONT * scaleFactor);
+
+            // Também sugerimos o gap proporcional se o campo existir
+            if (config.gap !== undefined) {
+                updates.gap = Math.round(BASE_GAP * scaleFactor);
+            }
+        }
+
+        // Aplicar todas as mudanças (dimensão + fonte sugerida)
+        Object.entries(updates).forEach(([k, v]) => onChange(k as keyof ItemConfig, v));
+    };
+
+    return (
+        <div className="bg-gray-800 p-3 rounded mb-3 border border-gray-700">
+            <h4 className="text-neon-green font-bold text-sm mb-2 uppercase">{label}</h4>
+            <div className="grid grid-cols-2 gap-2">
                 <div>
-                    <label className="text-gray-400 text-xs block mb-1">Cor Fundo</label>
+                    <label className="text-gray-400 text-xs block mb-1">Tamanho Fonte</label>
                     <input
-                        type="color"
-                        value={config.color || '#ffffff'}
-                        onChange={(e) => onChange('color', e.target.value)}
-                        className="w-full h-[26px] bg-gray-900 border border-gray-600 rounded cursor-pointer"
+                        type="number"
+                        value={config.fontSize}
+                        onChange={(e) => onChange('fontSize', Number(e.target.value))}
+                        className="w-full bg-gray-900 border border-gray-600 rounded px-2 py-1 text-white text-xs"
                     />
                 </div>
-            )}
-            {showDimensions && (
-                <>
+                {showColor && (
                     <div>
-                        <label className="text-gray-400 text-xs block mb-1">Largura</label>
+                        <label className="text-gray-400 text-xs block mb-1">Cor Box</label>
                         <input
-                            type="number"
-                            value={config.width || 320}
-                            onChange={(e) => onChange('width', Number(e.target.value))}
-                            className="w-full bg-gray-900 border border-gray-600 rounded px-2 py-1 text-white text-xs"
+                            type="color"
+                            value={config.color || '#ffffff'}
+                            onChange={(e) => onChange('color', e.target.value)}
+                            className="w-full h-[26px] bg-gray-900 border border-gray-600 rounded cursor-pointer"
                         />
                     </div>
-                    <div>
-                        <label className="text-gray-400 text-xs block mb-1">Altura</label>
-                        <input
-                            type="number"
-                            value={config.height || 100}
-                            onChange={(e) => onChange('height', Number(e.target.value))}
-                            className="w-full bg-gray-900 border border-gray-600 rounded px-2 py-1 text-white text-xs"
-                        />
-                    </div>
-                </>
-            )}
-            <div>
-                <label className="text-gray-400 text-xs block mb-1">Pos X</label>
-                <input
-                    type="range" min="-500" max="500"
-                    value={config.offsetX}
-                    onChange={(e) => onChange('offsetX', Number(e.target.value))}
-                    className="w-full accent-neon-green"
-                />
-            </div>
-            <div>
-                <label className="text-gray-400 text-xs block mb-1">Pos Y</label>
-                <input
-                    type="range" min="-500" max="500"
-                    value={config.offsetY}
-                    onChange={(e) => onChange('offsetY', Number(e.target.value))}
-                    className="w-full accent-neon-green"
-                />
-            </div>
-            {config.gap !== undefined && (
-                <div className="col-span-2">
-                    <label className="text-gray-400 text-xs block mb-1">Espaçamento (Gap: {config.gap}px)</label>
+                )}
+                {showDimensions && (
+                    <>
+                        <div>
+                            <label className="text-gray-400 text-xs block mb-1">Largura</label>
+                            <input
+                                type="number"
+                                value={config.width || 320}
+                                onChange={(e) => handleDimensionChange('width', Number(e.target.value))}
+                                className="w-full bg-gray-900 border border-gray-600 rounded px-2 py-1 text-white text-xs"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-gray-400 text-xs block mb-1">Altura</label>
+                            <input
+                                type="number"
+                                value={config.height || 110}
+                                onChange={(e) => handleDimensionChange('height', Number(e.target.value))}
+                                className="w-full bg-gray-900 border border-gray-600 rounded px-2 py-1 text-white text-xs"
+                            />
+                        </div>
+                    </>
+                )}
+                <div>
+                    <label className="text-gray-400 text-xs block mb-1">Pos X</label>
                     <input
-                        type="range" min="0" max="200" step="1"
-                        value={config.gap}
-                        onChange={(e) => onChange('gap', Number(e.target.value))}
-                        className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                        type="range" min="-500" max="500"
+                        value={config.offsetX}
+                        onChange={(e) => onChange('offsetX', Number(e.target.value))}
+                        className="w-full accent-neon-green"
                     />
                 </div>
-            )}
+                <div>
+                    <label className="text-gray-400 text-xs block mb-1">Pos Y</label>
+                    <input
+                        type="range" min="-500" max="500"
+                        value={config.offsetY}
+                        onChange={(e) => onChange('offsetY', Number(e.target.value))}
+                        className="w-full accent-neon-green"
+                    />
+                </div>
+                {config.gap !== undefined && (
+                    <div className="col-span-2">
+                        <label className="text-gray-400 text-xs block mb-1">Espaçamento (Gap: {config.gap}px)</label>
+                        <input
+                            type="range" min="0" max="200" step="1"
+                            value={config.gap}
+                            onChange={(e) => onChange('gap', Number(e.target.value))}
+                            className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                        />
+                    </div>
+                )}
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateFormat, onUpdateBackground, onImageUpload, onDownload }: ControlPanelProps) {
     const [activeTab, setActiveTab] = useState<'data' | 'texts' | 'prices' | 'bg'>('data');

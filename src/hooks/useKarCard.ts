@@ -23,8 +23,8 @@ const INITIAL_CONFIG: CanvasConfig = {
     details: { fontSize: 50, offsetX: 0, offsetY: 0 },
     year: { fontSize: 50, offsetX: 0, offsetY: 0 },
     price: { fontSize: 92, offsetX: 0, offsetY: 0 },
-    fipe: { fontSize: 32, offsetX: 0, offsetY: 0, width: 320, height: 110, color: '#FFFFFF', gap: 40 },
-    economy: { fontSize: 32, offsetX: 0, offsetY: 0, width: 320, height: 110, color: '#CCFF00', gap: 40 },
+    fipe: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 110, color: '#FFFFFF', gap: 28 },
+    economy: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 110, color: '#CCFF00', gap: 28 },
     karcashLogo: { fontSize: 30, offsetX: 0, offsetY: 0 },
     logoImage: { width: 412, offsetX: -38, offsetY: 129, fontSize: 0 }, // Inicializar com largura padrão
 

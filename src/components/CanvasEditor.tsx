@@ -266,42 +266,38 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             const { width = 320, height = 100, color = (type === 'fipe' ? COLOR_WHITE : COLOR_NEON), offsetX, offsetY, fontSize, gap } = config;
 
             // Posição baseada no RIGHT_COLUMN_TOP + offsetY
-            // Mas para dar liberdade total, vamos usar RIGHT_COLUMN_X como âncora horizontal também
             const boxX = (RIGHT_COLUMN_X - width) + offsetX;
-            const boxY = (type === 'fipe' ? RIGHT_COLUMN_TOP : (RIGHT_COLUMN_TOP + 300)) + offsetY; // Base Y diferente inicial para não sobrepor, mas ajustável
-
-            const bgColor = color;
-            const textColor = COLOR_BLACK;
+            const boxY = (type === 'fipe' ? RIGHT_COLUMN_TOP : (RIGHT_COLUMN_TOP + 300)) + offsetY;
 
             // Desenhar Box
-            ctx.fillStyle = bgColor;
+            ctx.fillStyle = color;
             ctx.fillRect(boxX, boxY, width, height);
 
-            ctx.textBaseline = 'middle';
+            ctx.textBaseline = 'top';
             ctx.textAlign = 'right';
 
-            // Label "TABELA FIPE:"
-            ctx.fillStyle = textColor;
+            // Label (ex: "TABELA FIPE:")
+            const padding = 20;
+            ctx.fillStyle = COLOR_BLACK;
             ctx.font = `bold ${Math.round(fontSize)}px Montserrat, sans-serif`;
-            ctx.fillText(label, boxX + width - 25, boxY + 25);
+            ctx.fillText(label, boxX + width - padding, boxY + padding);
 
             // Valor "R$ XX.XXX,XX"
             const priceValue = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const currencySym = 'R$';
 
-            ctx.fillStyle = textColor;
-
-            // 1. Valor Numérico (Grande - Proporcional ao box ou config?)
-            // Vamos usar o dobro do fontSize da label como base, ou fixo por enquanto
-            ctx.font = `900 ${Math.round(fontSize * 3)}px Montserrat, sans-serif`;
-            const valX = boxX + width - 20;
-            const valY = boxY + 25 + (gap || 40); // Agora usa o gap (padrão 40)
+            // 1. Valor Numérico
+            const valueFontSize = Math.round(fontSize * 2.8);
+            ctx.font = `900 ${valueFontSize}px Montserrat, sans-serif`;
+            const valX = boxX + width - padding;
+            // Centralizar verticalmente se o gap for muito pequeno, ou usar o gap
+            const valY = boxY + padding + (gap || Math.round(height * 0.4));
             ctx.fillText(priceValue, valX, valY);
 
             // 2. Símbolo R$
             const valMetrics = ctx.measureText(priceValue);
-            ctx.font = `bold ${Math.round(fontSize * 1.3)}px Montserrat, sans-serif`;
-            ctx.fillText(currencySym, valX - valMetrics.width - 10, valY + 2);
+            ctx.font = `bold ${Math.round(fontSize * 1.2)}px Montserrat, sans-serif`;
+            ctx.fillText(currencySym, valX - valMetrics.width - 10, valY + (valueFontSize * 0.1));
         };
 
         // 1. Tabela Fipe (Box Configurável)
