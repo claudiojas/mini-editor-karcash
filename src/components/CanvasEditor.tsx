@@ -176,7 +176,8 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const brandFinalY = TOP_CONTENT + brandY;
         const brandFinalX = LEFT_ALIGN + brandX;
 
-        ctx.font = `800 ${brandSize}px Archivo, sans-serif`;
+        const brandFont = `${state.config.brand.fontWeight || '800'} ${brandSize}px ${state.config.brand.fontFamily || 'Archivo'}, sans-serif`;
+        ctx.font = brandFont;
         const marcaWidth = ctx.measureText(marcaText).width + 60; // Padding
 
         ctx.fillStyle = COLOR_NEON;
@@ -195,7 +196,8 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
         // Tamanho da fonte dinâmico
         const { fontSize: modelSize, offsetX: modelX, offsetY: modelY } = state.config.model;
-        ctx.font = `900 ${modelSize}px Archivo, sans-serif`;
+        const modelFont = `${state.config.model.fontWeight || '900'} ${modelSize}px ${state.config.model.fontFamily || 'Archivo'}, sans-serif`;
+        ctx.font = modelFont;
 
         ctx.fillStyle = COLOR_NEON;
         ctx.textAlign = 'left';
@@ -237,7 +239,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const detailsFinalY = y + 120 + detY;
         const detailsFinalX = LEFT_ALIGN + detX;
 
-        ctx.font = `${detSize}px Montserrat, sans-serif`;
+        ctx.font = `${state.config.details.fontWeight || '400'} ${detSize}px ${state.config.details.fontFamily || 'Montserrat'}, sans-serif`;
         ctx.fillStyle = COLOR_WHITE;
 
         // Suporte a Multi-linhas (quebra manual \n ou automática se implementar depois)
@@ -257,7 +259,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const yearFinalY = detailsFinalY + detailsBlockHeight + 40 + yearY; // 40px de gap
         const yearFinalX = LEFT_ALIGN + yearX;
 
-        ctx.font = `bold ${yearSize}px Montserrat, sans-serif`;
+        ctx.font = `${state.config.year.fontWeight || '700'} ${yearSize}px ${state.config.year.fontFamily || 'Montserrat'}, sans-serif`;
         ctx.fillStyle = COLOR_NEON;
         ctx.fillText(anoText, yearFinalX, yearFinalY);
 
@@ -285,7 +287,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             // Label (ex: "TABELA FIPE:")
             const padding = 20;
             ctx.fillStyle = COLOR_BLACK;
-            ctx.font = `bold ${Math.round(fontSize)}px Montserrat, sans-serif`;
+            ctx.font = `${state.config.fipe.fontWeight || '700'} ${Math.round(fontSize)}px ${state.config.fipe.fontFamily || 'Montserrat'}, sans-serif`;
             ctx.fillText(label, boxX + width - padding, boxY + padding);
 
             // Valor "R$ XX.XXX,XX"
@@ -294,7 +296,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
             // 1. Valor Numérico
             const valueFontSize = Math.round(fontSize * 2.8);
-            ctx.font = `900 ${valueFontSize}px Montserrat, sans-serif`;
+            ctx.font = `${state.config.fipe.fontWeight || '900'} ${valueFontSize}px ${state.config.fipe.fontFamily || 'Montserrat'}, sans-serif`;
             const valX = boxX + width - padding;
             // Centralizar verticalmente se o gap for muito pequeno, ou usar o gap
             const valY = boxY + padding + (gap || Math.round(height * 0.4));
@@ -302,7 +304,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
             // 2. Símbolo R$
             const valMetrics = ctx.measureText(priceValue);
-            ctx.font = `bold ${Math.round(fontSize * 1.2)}px Montserrat, sans-serif`;
+            ctx.font = `${state.config.economy.fontWeight || '700'} ${Math.round(fontSize * 1.2)}px ${state.config.economy.fontFamily || 'Montserrat'}, sans-serif`;
             ctx.fillText(currencySym, valX - valMetrics.width - 10, valY + (valueFontSize * 0.1));
         };
 
@@ -324,7 +326,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const logoFinalY = karcashY + logoY;
 
         ctx.fillStyle = COLOR_WHITE;
-        ctx.font = `800 ${logoSize}px Archivo, sans-serif`;
+        ctx.font = `${state.config.karcashLogo.fontWeight || '800'} ${logoSize}px ${state.config.karcashLogo.fontFamily || 'Archivo'}, sans-serif`;
         ctx.fillText("KARCASH:", logoFinalX, logoFinalY);
 
         // Valor Gigante Neon
@@ -340,7 +342,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const finalPriceY = karcashY + 43 + priceY;
 
         // 1. Valor Numérico
-        ctx.font = `900 ${priceSize}px Montserrat, sans-serif`;
+        ctx.font = `${state.config.price.fontWeight || '900'} ${priceSize}px ${state.config.price.fontFamily || 'Montserrat'}, sans-serif`;
         ctx.fillText(kValue, finalPriceX, finalPriceY);
 
         // 2. Símbolo R$ (Menor e Proporcional)
@@ -348,7 +350,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const symFontSize = Math.round(priceSize * 0.42);
 
         const kMetrics = ctx.measureText(kValue);
-        ctx.font = `bold ${symFontSize}px Montserrat, sans-serif`;
+        ctx.font = `${state.config.price.fontWeight || '700'} ${symFontSize}px ${state.config.price.fontFamily || 'Montserrat'}, sans-serif`;
         // Ajuste Y do símbolo
         const symYOffset = priceSize * 0.42;
 

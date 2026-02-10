@@ -58,6 +58,19 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
         Object.entries(updates).forEach(([k, v]) => onChange(k as keyof ItemConfig, v));
     };
 
+    const fontFamilies = ['Montserrat', 'Archivo'];
+    const fontWeights = [
+        { label: 'Thin', value: '100' },
+        { label: 'Extra Light', value: '200' },
+        { label: 'Light', value: '300' },
+        { label: 'Regular', value: '400' },
+        { label: 'Medium', value: '500' },
+        { label: 'Semi Bold', value: '600' },
+        { label: 'Bold', value: '700' },
+        { label: 'Extra Bold', value: '800' },
+        { label: 'Black', value: '900' },
+    ];
+
     return (
         <div className="bg-gray-800 p-3 rounded mb-3 border border-gray-700">
             <h4 className="text-neon-green font-bold text-sm mb-2 uppercase">{label}</h4>
@@ -82,6 +95,28 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                         />
                     </div>
                 )}
+                {/* Seletores de Tipografia */}
+                <div className="flex flex-col">
+                    <label className="text-gray-400 text-[10px] block mb-1">Família</label>
+                    <select
+                        value={config.fontFamily || 'Montserrat'}
+                        onChange={(e) => onChange('fontFamily', e.target.value)}
+                        className="w-full bg-gray-900 border border-gray-600 rounded px-1 py-1 text-white text-[10px] focus:outline-none focus:border-neon-green"
+                    >
+                        {fontFamilies.map(f => <option key={f} value={f}>{f}</option>)}
+                    </select>
+                </div>
+                <div className="flex flex-col">
+                    <label className="text-gray-400 text-[10px] block mb-1">Estilo</label>
+                    <select
+                        value={config.fontWeight || '400'}
+                        onChange={(e) => onChange('fontWeight', e.target.value)}
+                        className="w-full bg-gray-900 border border-gray-600 rounded px-1 py-1 text-white text-[10px] focus:outline-none focus:border-neon-green"
+                    >
+                        {fontWeights.map(w => <option key={w.value} value={w.value}>{w.label}</option>)}
+                    </select>
+                </div>
+
                 {showDimensions && (
                     <>
                         <div>
