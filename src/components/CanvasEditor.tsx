@@ -263,7 +263,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
         const drawPriceBox = (label: string, value: number, config: ItemConfig, type: 'fipe' | 'economy') => {
             // Dimensões e Cores das Configurações
-            const { width = 320, height = 100, color = (type === 'fipe' ? COLOR_WHITE : COLOR_NEON), offsetX, offsetY, fontSize } = config;
+            const { width = 320, height = 100, color = (type === 'fipe' ? COLOR_WHITE : COLOR_NEON), offsetX, offsetY, fontSize, gap } = config;
 
             // Posição baseada no RIGHT_COLUMN_TOP + offsetY
             // Mas para dar liberdade total, vamos usar RIGHT_COLUMN_X como âncora horizontal também
@@ -295,7 +295,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             // Vamos usar o dobro do fontSize da label como base, ou fixo por enquanto
             ctx.font = `900 ${Math.round(fontSize * 3)}px Montserrat, sans-serif`;
             const valX = boxX + width - 20;
-            const valY = boxY + 65;
+            const valY = boxY + 25 + (gap || 40); // Agora usa o gap (padrão 40)
             ctx.fillText(priceValue, valX, valY);
 
             // 2. Símbolo R$
@@ -308,7 +308,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         drawPriceBox("TABELA FIPE:", state.data.fipePrice, state.config.fipe, 'fipe');
 
         // 2. Preço KarCash (Sem box, gigante, Neon)
-        // No modelo, o valor KarCash fica bem no meio, entre Fipe e Abaixo da Fipe
+        // No modelo, o valor KarCash fica bem no meio, entre Fipe e Margem de Lucro
         // Espaçamento generoso
         // Espaçamento generoso (Reduzido proporcionalmente)
         const karcashY = RIGHT_COLUMN_TOP + 150;
@@ -352,9 +352,9 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
 
         ctx.fillText(kSym, finalPriceX - kMetrics.width - 15, finalPriceY + symYOffset - priceSize + symFontSize); // Ajuste fino
 
-        // 3. Abaixo da Fipe (Box Configurável)
+        // 3. Margem de Lucro (Box Configurável)
         const economy = state.data.economyPrice;
-        drawPriceBox("ABAIXO DA FIPE:", economy, state.config.economy, 'economy');
+        drawPriceBox("MARGEM DE LUCRO:", economy, state.config.economy, 'economy');
 
         // 4. Logo KarCash (Imagem)
         if (state.config.logoImage && state.config.logoImage.width) {

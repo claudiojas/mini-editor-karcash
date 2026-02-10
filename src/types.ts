@@ -16,6 +16,7 @@ export interface ItemConfig {
     width?: number; // Novo: Largura (para boxes)
     height?: number; // Novo: Altura (para boxes)
     color?: string; // Novo: Cor de fundo (para boxes)
+    gap?: number; // Novo: Espaçamento entre label e valor
 }
 
 export interface CanvasConfig {
@@ -31,7 +32,7 @@ export interface CanvasConfig {
     year: ItemConfig;
     price: ItemConfig; // Valor KarCash
     fipe: ItemConfig; // Novo: Tabela Fipe Box
-    economy: ItemConfig; // Novo: Abaixo da Fipe Box
+    economy: ItemConfig; // Novo: Margem de Lucro Box
     karcashLogo: ItemConfig; // Novo: Logo/Texto KarCash
     logoImage: ItemConfig; // Novo: Logo Imagem KarCash
 

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { VehicleData, CanvasConfig, BackgroundConfig } from '../types';
 import bgLayerUrl from '../assets/backgroudapp.png'; // Importar default aqui também se precisar/ou manter só no hook
 
@@ -23,8 +23,8 @@ const INITIAL_CONFIG: CanvasConfig = {
     details: { fontSize: 50, offsetX: 0, offsetY: 0 },
     year: { fontSize: 50, offsetX: 0, offsetY: 0 },
     price: { fontSize: 92, offsetX: 0, offsetY: 0 },
-    fipe: { fontSize: 22, offsetX: 0, offsetY: 0, width: 350, height: 100, color: '#FFFFFF' },
-    economy: { fontSize: 22, offsetX: 0, offsetY: 0, width: 350, height: 100, color: '#CCFF00' },
+    fipe: { fontSize: 32, offsetX: 0, offsetY: 0, width: 320, height: 110, color: '#FFFFFF', gap: 40 },
+    economy: { fontSize: 32, offsetX: 0, offsetY: 0, width: 320, height: 110, color: '#CCFF00', gap: 40 },
     karcashLogo: { fontSize: 30, offsetX: 0, offsetY: 0 },
     logoImage: { width: 412, offsetX: -38, offsetY: 129, fontSize: 0 }, // Inicializar com largura padrão
 
@@ -52,7 +52,17 @@ export function useKarCard() {
         return Math.max(0, Math.round(discount)); // Nunca retorna negativo e arredonda
     }, [data.fipePrice, data.salePrice]);
 
+    // Automação da Margem de Lucro: Fipe - Venda = Margem
+    useEffect(() => {
+        const margin = (data.fipePrice || 0) - (data.salePrice || 0);
+        setData(prev => {
+            if (prev.economyPrice === margin) return prev;
+            return { ...prev, economyPrice: margin };
+        });
+    }, [data.fipePrice, data.salePrice]);
+
     const updateData = (field: keyof VehicleData, value: string | number) => {
+        // Impedir atualização manual da economia se quiser ser rigoroso, mas vamos apenas deixar fluir
         setData((prev) => ({ ...prev, [field]: value }));
     };
 

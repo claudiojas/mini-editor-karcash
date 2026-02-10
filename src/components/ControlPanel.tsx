@@ -84,6 +84,17 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                     className="w-full accent-neon-green"
                 />
             </div>
+            {config.gap !== undefined && (
+                <div className="col-span-2">
+                    <label className="text-gray-400 text-xs block mb-1">Espaçamento (Gap: {config.gap}px)</label>
+                    <input
+                        type="range" min="0" max="200" step="1"
+                        value={config.gap}
+                        onChange={(e) => onChange('gap', Number(e.target.value))}
+                        className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                    />
+                </div>
+            )}
         </div>
     </div>
 );
@@ -97,11 +108,6 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
         { id: 'prices', label: 'Preços' },
         { id: 'bg', label: 'Fundo' },
     ];
-
-    // Helper para atualizar configuração de um item específico
-    // const handleItemUpdate = (key: string, newValues: Partial<ItemConfig>) => {
-    //    // Removido pois ItemControl agora usa onChange direto com key/value
-    // };
 
     return (
         <div className="flex flex-col h-full bg-gray-900 text-white w-full overflow-hidden">
@@ -254,13 +260,17 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                                         className="w-full bg-gray-800 border border-neon-green rounded px-3 py-2 text-sm focus:outline-none font-bold text-white shadow-sm shadow-neon-green/20"
                                     />
                                 </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs text-gray-500">Abaixo da Fipe (Manual)</label>
-                                    <input
-                                        type="number" placeholder="0,00" step="0.01"
-                                        value={state.data.economyPrice || ''} onChange={(e) => onUpdateData('economyPrice', parseFloat(e.target.value))}
-                                        className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:border-neon-green focus:outline-none"
-                                    />
+                                <div>
+                                    <label className="text-[10px] text-gray-400 block mb-1">Margem de Lucro (Automática)</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neon-green text-xs font-bold font-ubuntu">R$</span>
+                                        <input
+                                            type="text"
+                                            value={state.data.economyPrice.toLocaleString('pt-BR')}
+                                            readOnly
+                                            className="w-full bg-gray-900/50 border border-gray-700/50 rounded-lg py-2 pl-9 pr-3 text-xs text-neon-green font-bold font-ubuntu cursor-not-allowed focus:outline-none"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -274,7 +284,6 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                         <ItemControl label="Detalhes" config={state.config.details} onChange={(k, v) => onUpdateConfig('details', { [k]: v })} />
                         <ItemControl label="Ano" config={state.config.year} onChange={(k, v) => onUpdateConfig('year', { [k]: v })} />
 
-                        {/* Custom Control for Logo Image */}
                         <div className="bg-gray-800 p-3 rounded mb-3 border border-gray-700">
                             <h4 className="text-neon-green font-bold text-sm mb-2 uppercase">Logo (Imagem)</h4>
                             <div className="grid grid-cols-2 gap-2">
@@ -353,7 +362,7 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                             onChange={(k, v) => onUpdateConfig('price', { [k]: v })}
                         />
                         <ItemControl
-                            label="Abaixo da Fipe (Box)"
+                            label="Margem de Lucro (Box)"
                             config={state.config.economy}
                             onChange={(k, v) => onUpdateConfig('economy', { [k]: v })}
                             showColor showDimensions
@@ -363,8 +372,6 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
 
                 {activeTab === 'bg' && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-
-                        {/* Botão Restaurar Padrão */}
                         <button
                             onClick={() => onUpdateBackground({
                                 type: 'image',
@@ -376,7 +383,6 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                             Restaurar Padrão
                         </button>
 
-                        {/* Upload Background Image */}
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-500 uppercase">Imagem de Fundo</label>
                             <label className="flex flex-col items-center justify-center w-full h-20 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 hover:border-neon-green transition-colors">
@@ -401,7 +407,6 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                             </label>
                         </div>
 
-                        {/* Solid Color */}
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-500 uppercase">Cor Sólida</label>
                             <div className="flex items-center gap-2">
@@ -418,11 +423,8 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                             </div>
                         </div>
 
-                        {/* Gradients */}
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-500 uppercase">Gradientes</label>
-
-                            {/* Presets */}
                             <div className="grid grid-cols-2 gap-2 mb-4">
                                 <button
                                     onClick={() => onUpdateBackground({
@@ -446,7 +448,6 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                                 />
                             </div>
 
-                            {/* Controles de Gradiente (Só aparecem se tipo for gradiente ou se usuário quiser editar) */}
                             {state.background.type === 'gradient' && state.background.gradient && (
                                 <div className="bg-gray-800 p-3 rounded border border-gray-700 space-y-3">
                                     <div className="grid grid-cols-2 gap-2">
@@ -503,10 +504,8 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                         </div>
                     </div>
                 )}
-
             </div>
 
-            {/* Footer */}
             <div className="p-4 border-t border-gray-800 bg-gray-900 shrink-0 z-20">
                 <button
                     onClick={onDownload}
