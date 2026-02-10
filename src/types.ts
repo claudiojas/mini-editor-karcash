@@ -49,10 +49,17 @@ export interface BackgroundConfig {
     };
 }
 
+export interface LayoutConfig {
+    config: CanvasConfig;
+    background: BackgroundConfig;
+}
+
 export interface KarCardState {
     image: string | null; // URL da imagem carregada (Carro)
     data: VehicleData;
-    config: CanvasConfig;
-    background: BackgroundConfig; // Novo: Configuração de fundo
     format: 'story' | 'poster';
+    layouts: {
+        story: LayoutConfig;
+        poster: LayoutConfig;
+    };
 }

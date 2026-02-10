@@ -1,9 +1,15 @@
 import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import type { KarCardState, ItemConfig } from '../types';
+import type { VehicleData, CanvasConfig, BackgroundConfig, ItemConfig } from '../types';
 import logoKarcashUrl from '../assets/logo_karcash-removebg_1.webp';
 
 interface CanvasEditorProps {
-    state: KarCardState;
+    state: {
+        image: string | null;
+        data: VehicleData;
+        config: CanvasConfig;
+        format: 'story' | 'poster';
+        background: BackgroundConfig;
+    };
     discountPercentage: number;
 }
 

@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import type { KarCardState, ItemConfig, BackgroundConfig } from '../types';
+import type { VehicleData, CanvasConfig, ItemConfig, BackgroundConfig } from '../types';
 import bgLayerUrl from '../assets/backgroudapp.png'; // Importar para restaurar padrão
 
 interface ControlPanelProps {
-    state: KarCardState;
+    state: {
+        image: string | null;
+        data: VehicleData;
+        config: CanvasConfig;
+        format: 'story' | 'poster';
+        background: BackgroundConfig;
+    };
     onUpdateData: (field: any, value: any) => void;
     onUpdateConfig: (field: any, value: any) => void;
     onUpdateFormat: (format: 'story' | 'poster') => void;
     onUpdateBackground: (bg: BackgroundConfig) => void;
+    onRestoreDefaults: () => void;
     onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onDownload: () => void;
 }
@@ -56,7 +63,7 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
             <h4 className="text-neon-green font-bold text-sm mb-2 uppercase">{label}</h4>
             <div className="grid grid-cols-2 gap-2">
                 <div>
-                    <label className="text-gray-400 text-xs block mb-1">Tamanho Fonte</label>
+                    <label className="text-gray-400 text-[10px] block mb-1">Fonte: {config.fontSize}px</label>
                     <input
                         type="number"
                         value={config.fontSize}
@@ -66,7 +73,7 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                 </div>
                 {showColor && (
                     <div>
-                        <label className="text-gray-400 text-xs block mb-1">Cor Box</label>
+                        <label className="text-gray-400 text-[10px] block mb-1">Cor Box</label>
                         <input
                             type="color"
                             value={config.color || '#ffffff'}
@@ -78,7 +85,7 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                 {showDimensions && (
                     <>
                         <div>
-                            <label className="text-gray-400 text-xs block mb-1">Largura</label>
+                            <label className="text-gray-400 text-[10px] block mb-1">Largura: {config.width || 320}px</label>
                             <input
                                 type="number"
                                 value={config.width || 320}
@@ -87,7 +94,7 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                             />
                         </div>
                         <div>
-                            <label className="text-gray-400 text-xs block mb-1">Altura</label>
+                            <label className="text-gray-400 text-[10px] block mb-1">Altura: {config.height || 110}px</label>
                             <input
                                 type="number"
                                 value={config.height || 110}
@@ -98,7 +105,7 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                     </>
                 )}
                 <div>
-                    <label className="text-gray-400 text-xs block mb-1">Pos X</label>
+                    <label className="text-gray-400 text-[10px] block mb-1">Eixo X: {config.offsetX}px</label>
                     <input
                         type="range" min="-500" max="500"
                         value={config.offsetX}
@@ -107,7 +114,7 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                     />
                 </div>
                 <div>
-                    <label className="text-gray-400 text-xs block mb-1">Pos Y</label>
+                    <label className="text-gray-400 text-[10px] block mb-1">Eixo Y: {config.offsetY}px</label>
                     <input
                         type="range" min="-500" max="500"
                         value={config.offsetY}
@@ -117,7 +124,7 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                 </div>
                 {config.gap !== undefined && (
                     <div className="col-span-2">
-                        <label className="text-gray-400 text-xs block mb-1">Espaçamento (Gap: {config.gap}px)</label>
+                        <label className="text-gray-400 text-[10px] block mb-1">Espaçamento (Gap: {config.gap}px)</label>
                         <input
                             type="range" min="0" max="200" step="1"
                             value={config.gap}
@@ -131,7 +138,7 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
     );
 };
 
-export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateFormat, onUpdateBackground, onImageUpload, onDownload }: ControlPanelProps) {
+export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateFormat, onUpdateBackground, onRestoreDefaults, onImageUpload, onDownload }: ControlPanelProps) {
     const [activeTab, setActiveTab] = useState<'data' | 'texts' | 'prices' | 'bg'>('data');
 
     const tabs = [
@@ -145,7 +152,13 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
         <div className="flex flex-col h-full bg-gray-900 text-white w-full overflow-hidden">
             <div className="p-4 bg-gray-900 border-b border-gray-800 shrink-0 z-20">
                 <div className="flex justify-between items-center mb-4">
-                    <img src="/logo_sec-removebg.webp" alt="Logo Secundária" className="h-10 object-contain mx-auto" />
+                    <img src="/logo_sec-removebg.webp" alt="Logo Secundária" className="h-10 object-contain" />
+                    <button
+                        onClick={onRestoreDefaults}
+                        className="text-[10px] bg-red-900/30 hover:bg-red-900/50 text-red-400 px-2 py-1 rounded border border-red-900/50 transition-colors uppercase font-bold"
+                    >
+                        Restaurar Padrão
+                    </button>
                 </div>
 
                 {/* Format Switcher */}

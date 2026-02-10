@@ -17,7 +17,8 @@ function App() {
     format,
     setFormat,
     background,
-    setBackground
+    setBackground,
+    restoreDefaults
   } = useKarCard();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +42,7 @@ function App() {
           onUpdateConfig={updateConfig}
           onUpdateFormat={setFormat}
           onUpdateBackground={setBackground}
+          onRestoreDefaults={restoreDefaults}
           onImageUpload={handleImageUpload}
           onDownload={handleDownload}
         />
