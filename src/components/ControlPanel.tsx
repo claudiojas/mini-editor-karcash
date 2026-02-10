@@ -257,7 +257,7 @@ export function ControlPanel({
                     <button
                         onClick={() => onUpdateFormat('story')}
                         className={`flex-1 py-2 rounded-md text-xs font-bold transition-all ${state.format === 'story'
-                            ? 'bg-neon-green text-black shadow-lg shadow-neon-green/20'
+                            ? 'bg-neon-green text-white shadow-lg shadow-neon-green/20'
                             : 'text-gray-400 hover:text-white'
                             }`}
                     >
@@ -266,7 +266,7 @@ export function ControlPanel({
                     <button
                         onClick={() => onUpdateFormat('poster')}
                         className={`flex-1 py-2 rounded-md text-xs font-bold transition-all ${state.format === 'poster'
-                            ? 'bg-neon-green text-black shadow-lg shadow-neon-green/20'
+                            ? 'bg-neon-green text-white shadow-lg shadow-neon-green/20'
                             : 'text-gray-400 hover:text-white'
                             }`}
                     >
@@ -620,7 +620,7 @@ export function ControlPanel({
                                         rotation: state.background.rotation === 180 ? 0 : 180
                                     })}
                                     className={`text-[10px] px-2 py-1 rounded border transition-all flex items-center gap-1 ${state.background.rotation === 180
-                                        ? 'bg-neon-green text-black border-neon-green font-bold'
+                                        ? 'bg-neon-green text-white border-neon-green font-bold'
                                         : 'bg-gray-800 text-gray-400 border-gray-700'
                                         }`}
                                 >
@@ -773,7 +773,7 @@ export function ControlPanel({
             <div className="p-4 border-t border-gray-800 bg-gray-900 shrink-0 z-20">
                 <button
                     onClick={onDownload}
-                    className="w-full bg-neon-green text-black font-black uppercase tracking-wider py-4 rounded-lg hover:bg-[#b3e600] transition-colors flex items-center justify-center gap-2 shadow-lg hover:shadow-neon-green/30"
+                    className="w-full bg-neon-green text-white font-black uppercase tracking-wider py-4 rounded-lg hover:bg-[#b3e600] hover:text-black transition-colors flex items-center justify-center gap-2 shadow-lg hover:shadow-neon-green/30"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
