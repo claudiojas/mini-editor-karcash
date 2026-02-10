@@ -17,6 +17,8 @@ interface ControlPanelProps {
     onRestoreDefaults: () => void;
     onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onDownload: () => void;
+    isProcessing?: boolean;
+    onRemoveBackground?: () => void;
 }
 
 interface ItemControlProps {
@@ -209,7 +211,18 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
     );
 };
 
-export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateFormat, onUpdateBackground, onRestoreDefaults, onImageUpload, onDownload }: ControlPanelProps) {
+export function ControlPanel({
+    state,
+    onUpdateData,
+    onUpdateConfig,
+    onUpdateFormat,
+    onUpdateBackground,
+    onRestoreDefaults,
+    onImageUpload,
+    onDownload,
+    isProcessing = false,
+    onRemoveBackground
+}: ControlPanelProps) {
     const [activeTab, setActiveTab] = useState<'data' | 'texts' | 'prices' | 'bg'>('data');
 
     const tabs = [
@@ -282,6 +295,34 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                                 </div>
                                 <input type="file" className="hidden" accept="image/*" onChange={onImageUpload} />
                             </label>
+
+                            {/* Botão de Remoção de Fundo */}
+                            {state.image && (
+                                <button
+                                    onClick={onRemoveBackground}
+                                    disabled={isProcessing}
+                                    className={`w-full py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 border ${isProcessing
+                                            ? 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
+                                            : 'bg-white text-black border-white hover:bg-neon-green hover:border-neon-green shadow-sm'
+                                        }`}
+                                >
+                                    {isProcessing ? (
+                                        <>
+                                            <span className="animate-spin h-3 w-3 border-2 border-neon-green border-t-transparent rounded-full" />
+                                            Processando IA (40MB)...
+                                        </>
+                                    ) : (
+                                        <>
+                                            ✨ Remover Fundo (IA)
+                                        </>
+                                    )}
+                                </button>
+                            )}
+                            {state.image && !isProcessing && (
+                                <p className="text-[9px] text-zinc-500 text-center italic">
+                                    *Processamento local. A primeira vez pode demorar alguns segundos.
+                                </p>
+                            )}
 
                             {/* Zoom, Rotation & Pan Globais (Imagem) */}
                             <div className="grid grid-cols-2 gap-x-3 gap-y-4 pt-2">

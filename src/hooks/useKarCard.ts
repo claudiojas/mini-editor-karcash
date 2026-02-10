@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { removeBackground } from '@imgly/background-removal';
 import type { VehicleData, CanvasConfig, BackgroundConfig, KarCardState } from '../types';
 import bgLayerUrl from '../assets/backgroudapp.png';
 
@@ -82,6 +83,7 @@ export function useKarCard() {
     };
 
     const [state, setState] = useState<KarCardState>(loadInitialState());
+    const [isProcessing, setIsProcessing] = useState(false);
 
     // 2. Persistência Automática
     useEffect(() => {
@@ -177,6 +179,33 @@ export function useKarCard() {
         }));
     };
 
+    const removeImageBackground = async () => {
+        if (!state.image || isProcessing) return;
+
+        try {
+            setIsProcessing(true);
+            // Configurar a URL base para os assets (necessário para o Vite encontrar os modelos)
+            const blob = await removeBackground(state.image, {
+                progress: (key: string, current: number, total: number) => {
+                    console.log(`AI Progress: ${key} (${current}/${total})`);
+                }
+            });
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64data = reader.result as string;
+                setImage(base64data);
+                setIsProcessing(false);
+            };
+            reader.readAsDataURL(blob);
+        } catch (error) {
+            console.error('Falha ao remover fundo:', error);
+            setIsProcessing(true); // Manter true momentâneo para o UI feedback se necessário, ou resetar
+            setIsProcessing(false);
+            alert('Não foi possível remover o fundo da imagem. Verifique se a foto é nítida ou tente novamente.');
+        }
+    };
+
     return {
         image: state.image,
         setImage,
@@ -191,5 +220,7 @@ export function useKarCard() {
         setBackground,
         restoreDefaults,
         state, // Exportar estado completo se necessário
+        isProcessing,
+        removeImageBackground
     };
 }
