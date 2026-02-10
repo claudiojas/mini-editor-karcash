@@ -20,6 +20,7 @@ interface ControlPanelProps {
     onDownload: () => void;
     isProcessing?: boolean;
     onRemoveBackground?: () => void;
+    onRemoveImage?: () => void;
 }
 
 interface ItemControlProps {
@@ -222,7 +223,8 @@ export function ControlPanel({
     onImageUpload,
     onDownload,
     isProcessing = false,
-    onRemoveBackground
+    onRemoveBackground,
+    onRemoveImage
 }: ControlPanelProps) {
     const [activeTab, setActiveTab] = useState<'data' | 'texts' | 'prices' | 'bg'>('data');
 
@@ -297,28 +299,34 @@ export function ControlPanel({
                                 <input type="file" className="hidden" accept="image/*" onChange={onImageUpload} />
                             </label>
 
-                            {/* Botão de Remoção de Fundo */}
-                            {state.image && (
-                                <button
-                                    onClick={onRemoveBackground}
-                                    disabled={isProcessing}
-                                    className={`w-full py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 border ${isProcessing
-                                        ? 'bg-gray-800 text-gray-500 border-gray-700 cursor-not-allowed'
-                                        : 'bg-white text-black border-white hover:bg-neon-green hover:border-neon-green shadow-sm'
-                                        }`}
-                                >
-                                    {isProcessing ? (
-                                        <>
-                                            <span className="animate-spin h-3 w-3 border-2 border-neon-green border-t-transparent rounded-full" />
-                                            Processando IA (40MB)...
-                                        </>
-                                    ) : (
-                                        <>
-                                            ✨ Remover Fundo (IA)
-                                        </>
-                                    )}
-                                </button>
-                            )}
+                            {/* Botões de Ação de Imagem */}
+                            <div className="flex gap-2">
+                                {isProcessing ? (
+                                    <div className="flex-1 bg-gray-800 border border-gray-700 text-neon-green text-[10px] font-bold uppercase py-3 rounded-lg flex items-center justify-center gap-2 animate-pulse">
+                                        <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Processando IA...
+                                    </div>
+                                ) : state.image && (
+                                    <>
+                                        <button
+                                            onClick={onRemoveBackground}
+                                            className="flex-1 bg-neon-green/10 border border-neon-green/30 text-neon-green text-[10px] font-black uppercase py-3 rounded-lg hover:bg-neon-green hover:text-black transition-all flex items-center justify-center gap-2"
+                                        >
+                                            Remover Fundo ✨
+                                        </button>
+                                        <button
+                                            onClick={onRemoveImage}
+                                            className="px-4 bg-gray-800 border border-gray-700 text-gray-400 text-[10px] font-bold uppercase py-3 rounded-lg hover:bg-red-900/20 hover:text-red-400 hover:border-red-900/50 transition-all flex items-center justify-center"
+                                            title="Deletar Imagem"
+                                        >
+                                            🗑️
+                                        </button>
+                                    </>
+                                )}
+                            </div>
                             {state.image && !isProcessing && (
                                 <p className="text-[9px] text-zinc-500 text-center italic">
                                     *Processamento local. A primeira vez pode demorar alguns segundos.

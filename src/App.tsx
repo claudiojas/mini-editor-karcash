@@ -49,6 +49,7 @@ function App() {
           onDownload={handleDownload}
           isProcessing={isProcessing}
           onRemoveBackground={removeImageBackground}
+          onRemoveImage={() => setImage(null)}
         />
       </aside>
 
