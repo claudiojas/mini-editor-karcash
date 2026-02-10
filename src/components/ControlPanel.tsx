@@ -84,6 +84,15 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                         className="w-full bg-gray-900 border border-gray-600 rounded px-2 py-1 text-white text-xs"
                     />
                 </div>
+                <div>
+                    <label className="text-gray-400 text-[10px] block mb-1">Cor Texto</label>
+                    <input
+                        type="color"
+                        value={config.textColor || '#ffffff'}
+                        onChange={(e) => onChange('textColor', e.target.value)}
+                        className="w-full h-[26px] bg-gray-900 border border-gray-600 rounded cursor-pointer"
+                    />
+                </div>
                 {showColor && (
                     <div>
                         <label className="text-gray-400 text-[10px] block mb-1">Cor Box</label>
@@ -95,6 +104,33 @@ const ItemControl = ({ label, config, onChange, showColor = false, showDimension
                         />
                     </div>
                 )}
+
+                {/* Brand Palette Row */}
+                <div className="col-span-2">
+                    <label className="text-gray-400 text-[10px] block mb-1 uppercase tracking-wider font-bold opacity-70">Atalhos (Paleta KarCash)</label>
+                    <div className="flex gap-2 mt-1">
+                        {[
+                            { name: 'Limão', hex: '#DBFC1D' },
+                            { name: 'Escuro', hex: '#071601' },
+                            { name: 'Preto', hex: '#080A09' },
+                            { name: 'Branco', hex: '#F7F7F7' },
+                            { name: 'Musgo', hex: '#394236' }
+                        ].map((c) => (
+                            <button
+                                key={c.hex}
+                                title={c.name}
+                                onClick={() => {
+                                    onChange('textColor', c.hex);
+                                    if (showColor) onChange('color', c.hex);
+                                }}
+                                className="w-6 h-6 rounded-full border border-gray-600 hover:scale-110 transition-transform shadow-sm flex items-center justify-center overflow-hidden"
+                                style={{ backgroundColor: c.hex }}
+                            >
+                                <span className="sr-only">{c.name}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 {/* Seletores de Tipografia */}
                 <div className="flex flex-col">
                     <label className="text-gray-400 text-[10px] block mb-1">Família</label>

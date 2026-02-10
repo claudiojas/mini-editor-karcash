@@ -1,6 +1,7 @@
 import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import type { VehicleData, CanvasConfig, BackgroundConfig, ItemConfig } from '../types';
 import logoKarcashUrl from '../assets/logo_karcash-removebg_1.webp';
+import { COLORS } from '../hooks/useKarCard';
 
 interface CanvasEditorProps {
     state: {
@@ -153,10 +154,10 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
     }, [state, discountPercentage]);
 
     const drawOverlay = (ctx: CanvasRenderingContext2D) => {
-        // Cores
-        const COLOR_NEON = '#CCFF00';
-        const COLOR_WHITE = '#FFFFFF';
-        const COLOR_BLACK = '#000000';
+        // Cores (Brand Typology Defaults)
+        const COLOR_NEON = COLORS.VERDE_LIMAO;
+        const COLOR_WHITE = COLORS.BRANCO_SUAVE;
+        const COLOR_BLACK = COLORS.PRETO_PROFUNDO;
 
         // Fontes
 
@@ -180,12 +181,12 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         ctx.font = brandFont;
         const marcaWidth = ctx.measureText(marcaText).width + 60; // Padding
 
-        ctx.fillStyle = COLOR_NEON;
+        ctx.fillStyle = state.config.brand.color || COLOR_NEON;
         // Desenhar retângulo ajustado ao novo Y e altura da fonte
         const brandRectHeight = brandSize + 30; // Altura proporcional
         ctx.fillRect(brandFinalX, brandFinalY, marcaWidth, brandRectHeight);
 
-        ctx.fillStyle = COLOR_BLACK;
+        ctx.fillStyle = state.config.brand.textColor || COLOR_BLACK;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
         // Centralizar texto no retângulo
@@ -199,7 +200,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const modelFont = `${state.config.model.fontWeight || '900'} ${modelSize}px ${state.config.model.fontFamily || 'Archivo'}, sans-serif`;
         ctx.font = modelFont;
 
-        ctx.fillStyle = COLOR_NEON;
+        ctx.fillStyle = state.config.model.textColor || COLOR_NEON;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
         // Quebrar linha se for muito longo (simples)
@@ -240,7 +241,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const detailsFinalX = LEFT_ALIGN + detX;
 
         ctx.font = `${state.config.details.fontWeight || '400'} ${detSize}px ${state.config.details.fontFamily || 'Montserrat'}, sans-serif`;
-        ctx.fillStyle = COLOR_WHITE;
+        ctx.fillStyle = state.config.details.textColor || COLOR_WHITE;
 
         // Suporte a Multi-linhas (quebra manual \n ou automática se implementar depois)
         const detailLines = detailsText.split('\n');
@@ -260,7 +261,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const yearFinalX = LEFT_ALIGN + yearX;
 
         ctx.font = `${state.config.year.fontWeight || '700'} ${yearSize}px ${state.config.year.fontFamily || 'Montserrat'}, sans-serif`;
-        ctx.fillStyle = COLOR_NEON;
+        ctx.fillStyle = state.config.year.textColor || COLOR_NEON;
         ctx.fillText(anoText, yearFinalX, yearFinalY);
 
 
@@ -297,6 +298,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             // 1. Valor Numérico
             const valueFontSize = Math.round(fontSize * 2.8);
             ctx.font = `${state.config.fipe.fontWeight || '900'} ${valueFontSize}px ${state.config.fipe.fontFamily || 'Montserrat'}, sans-serif`;
+            ctx.fillStyle = config.textColor || COLOR_BLACK;
             const valX = boxX + width - padding;
             // Centralizar verticalmente se o gap for muito pequeno, ou usar o gap
             const valY = boxY + padding + (gap || Math.round(height * 0.4));
@@ -305,6 +307,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             // 2. Símbolo R$
             const valMetrics = ctx.measureText(priceValue);
             ctx.font = `${state.config.economy.fontWeight || '700'} ${Math.round(fontSize * 1.2)}px ${state.config.economy.fontFamily || 'Montserrat'}, sans-serif`;
+            ctx.fillStyle = config.textColor || COLOR_BLACK;
             ctx.fillText(currencySym, valX - valMetrics.width - 10, valY + (valueFontSize * 0.1));
         };
 
@@ -325,13 +328,13 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
         const logoFinalX = RIGHT_COLUMN_X + logoX;
         const logoFinalY = karcashY + logoY;
 
-        ctx.fillStyle = COLOR_WHITE;
+        ctx.fillStyle = state.config.karcashLogo.textColor || COLOR_WHITE;
         ctx.font = `${state.config.karcashLogo.fontWeight || '800'} ${logoSize}px ${state.config.karcashLogo.fontFamily || 'Archivo'}, sans-serif`;
         ctx.fillText("KARCASH:", logoFinalX, logoFinalY);
 
         // Valor Gigante Neon
         // Valor Gigante Neon
-        ctx.fillStyle = COLOR_NEON;
+        ctx.fillStyle = state.config.price.textColor || COLOR_NEON;
 
         const kValue = state.data.salePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const kSym = 'R$';

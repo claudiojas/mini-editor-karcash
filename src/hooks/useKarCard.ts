@@ -4,6 +4,14 @@ import bgLayerUrl from '../assets/backgroudapp.png';
 
 const STORAGE_KEY = 'karcash_editor_state';
 
+export const COLORS = {
+    VERDE_LIMAO: '#DBFC1D',
+    VERDE_ESCURO: '#071601',
+    PRETO_PROFUNDO: '#080A09',
+    BRANCO_SUAVE: '#F7F7F7',
+    VERDE_MUSGO: '#394236'
+} as const;
+
 const INITIAL_DATA: VehicleData = {
     brand: '',
     model: '',
@@ -19,14 +27,14 @@ const DEFAULT_STORY_CONFIG: CanvasConfig = {
     pan: { x: 0, y: 0 },
     rotation: 0,
     overlayOpacity: 1,
-    brand: { fontSize: 50, offsetX: 0, offsetY: 0, fontFamily: 'Archivo', fontWeight: '800' },
-    model: { fontSize: 110, offsetX: 0, offsetY: 0, fontFamily: 'Archivo', fontWeight: '900' },
-    details: { fontSize: 50, offsetX: 0, offsetY: 0, fontFamily: 'Montserrat', fontWeight: '400' },
-    year: { fontSize: 50, offsetX: 0, offsetY: 0, fontFamily: 'Montserrat', fontWeight: '700' },
-    price: { fontSize: 92, offsetX: 0, offsetY: 0, fontFamily: 'Montserrat', fontWeight: '700' },
-    fipe: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 110, color: '#FFFFFF', gap: 28, fontFamily: 'Montserrat', fontWeight: '700' },
-    economy: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 110, color: '#CCFF00', gap: 28, fontFamily: 'Montserrat', fontWeight: '700' },
-    karcashLogo: { fontSize: 30, offsetX: 0, offsetY: 0, fontFamily: 'Archivo', fontWeight: '800' },
+    brand: { fontSize: 50, offsetX: 0, offsetY: 0, fontFamily: 'Archivo', fontWeight: '800', textColor: COLORS.PRETO_PROFUNDO, color: COLORS.VERDE_LIMAO },
+    model: { fontSize: 110, offsetX: 0, offsetY: 0, fontFamily: 'Archivo', fontWeight: '900', textColor: COLORS.VERDE_LIMAO },
+    details: { fontSize: 50, offsetX: 0, offsetY: 0, fontFamily: 'Montserrat', fontWeight: '400', textColor: COLORS.BRANCO_SUAVE },
+    year: { fontSize: 50, offsetX: 0, offsetY: 0, fontFamily: 'Montserrat', fontWeight: '700', textColor: COLORS.VERDE_LIMAO },
+    price: { fontSize: 92, offsetX: 0, offsetY: 0, fontFamily: 'Montserrat', fontWeight: '700', textColor: COLORS.VERDE_LIMAO },
+    fipe: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 110, color: COLORS.BRANCO_SUAVE, gap: 28, fontFamily: 'Montserrat', fontWeight: '700', textColor: COLORS.PRETO_PROFUNDO },
+    economy: { fontSize: 22, offsetX: 0, offsetY: 0, width: 320, height: 110, color: COLORS.VERDE_LIMAO, gap: 28, fontFamily: 'Montserrat', fontWeight: '700', textColor: COLORS.PRETO_PROFUNDO },
+    karcashLogo: { fontSize: 30, offsetX: 0, offsetY: 0, fontFamily: 'Archivo', fontWeight: '800', textColor: COLORS.BRANCO_SUAVE },
     logoImage: { width: 412, offsetX: -38, offsetY: 129, fontSize: 0 },
     salePriceFontSize: 120,
 };
@@ -34,21 +42,21 @@ const DEFAULT_STORY_CONFIG: CanvasConfig = {
 const DEFAULT_POSTER_CONFIG: CanvasConfig = {
     ...DEFAULT_STORY_CONFIG,
     zoom: 1.05,
-    brand: { fontSize: 42, offsetX: 0, offsetY: -110, fontFamily: 'Archivo', fontWeight: '800' },
-    model: { fontSize: 96, offsetX: 0, offsetY: -120, fontFamily: 'Archivo', fontWeight: '900' },
-    details: { fontSize: 38, offsetX: 0, offsetY: -10, fontFamily: 'Montserrat', fontWeight: '400' },
-    year: { fontSize: 38, offsetX: 0, offsetY: -15, fontFamily: 'Montserrat', fontWeight: '700' },
-    price: { fontSize: 94, offsetX: 0, offsetY: -130, fontFamily: 'Montserrat', fontWeight: '700' },
-    fipe: { fontSize: 20, offsetX: 0, offsetY: -110, width: 280, height: 95, color: '#FFFFFF', gap: 28, fontFamily: 'Montserrat', fontWeight: '700' },
-    economy: { fontSize: 20, offsetX: 0, offsetY: -110, width: 280, height: 95, color: '#CCFF00', gap: 28, fontFamily: 'Montserrat', fontWeight: '700' },
-    karcashLogo: { fontSize: 26, offsetX: 0, offsetY: -127, fontFamily: 'Archivo', fontWeight: '800' },
+    brand: { fontSize: 42, offsetX: 0, offsetY: -110, fontFamily: 'Archivo', fontWeight: '800', textColor: COLORS.PRETO_PROFUNDO, color: COLORS.VERDE_LIMAO },
+    model: { fontSize: 96, offsetX: 0, offsetY: -120, fontFamily: 'Archivo', fontWeight: '900', textColor: COLORS.VERDE_LIMAO },
+    details: { fontSize: 38, offsetX: 0, offsetY: -10, fontFamily: 'Montserrat', fontWeight: '400', textColor: COLORS.BRANCO_SUAVE },
+    year: { fontSize: 38, offsetX: 0, offsetY: -15, fontFamily: 'Montserrat', fontWeight: '700', textColor: COLORS.VERDE_LIMAO },
+    price: { fontSize: 94, offsetX: 0, offsetY: -130, fontFamily: 'Montserrat', fontWeight: '700', textColor: COLORS.VERDE_LIMAO },
+    fipe: { fontSize: 20, offsetX: 0, offsetY: -110, width: 280, height: 95, color: COLORS.BRANCO_SUAVE, gap: 28, fontFamily: 'Montserrat', fontWeight: '700', textColor: COLORS.PRETO_PROFUNDO },
+    economy: { fontSize: 20, offsetX: 0, offsetY: -110, width: 280, height: 95, color: COLORS.VERDE_LIMAO, gap: 28, fontFamily: 'Montserrat', fontWeight: '700', textColor: COLORS.PRETO_PROFUNDO },
+    karcashLogo: { fontSize: 26, offsetX: 0, offsetY: -127, fontFamily: 'Archivo', fontWeight: '800', textColor: COLORS.BRANCO_SUAVE },
     logoImage: { width: 360, offsetX: -40, offsetY: 80, fontSize: 0 },
 };
 
 const DEFAULT_BACKGROUND: BackgroundConfig = {
     type: 'image',
     value: bgLayerUrl,
-    gradient: { colors: ['#CCFF00', '#000000'], direction: 180 }
+    gradient: { colors: [COLORS.VERDE_LIMAO, COLORS.PRETO_PROFUNDO], direction: 180 }
 };
 
 export function useKarCard() {

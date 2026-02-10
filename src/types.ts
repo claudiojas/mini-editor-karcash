@@ -14,6 +14,7 @@ export interface ItemConfig {
     offsetY: number;
     fontFamily?: 'Montserrat' | 'Archivo';
     fontWeight?: string | number;
+    textColor?: string;
     align?: 'left' | 'center' | 'right';
     width?: number; // Novo: Largura (para boxes)
     height?: number; // Novo: Altura (para boxes)
