@@ -6,7 +6,7 @@ interface ControlPanelProps {
     state: KarCardState;
     onUpdateData: (field: any, value: any) => void;
     onUpdateConfig: (field: any, value: any) => void;
-    onUpdateFormat: (format: 'story' | 'feed') => void;
+    onUpdateFormat: (format: 'story' | 'poster') => void;
     onUpdateBackground: (bg: BackgroundConfig) => void;
     onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onDownload: () => void;
@@ -114,7 +114,7 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                 <div className="bg-gray-800 p-1 rounded-lg border border-gray-700 flex mb-4">
                     <button
                         onClick={() => onUpdateFormat('story')}
-                        className={`flex-1 py-1.5 rounded-md text-xs font-bold transition-all ${state.format === 'story'
+                        className={`flex-1 py-2 rounded-md text-xs font-bold transition-all ${state.format === 'story'
                             ? 'bg-neon-green text-black shadow-lg shadow-neon-green/20'
                             : 'text-gray-400 hover:text-white'
                             }`}
@@ -122,13 +122,13 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                         Story (9:16)
                     </button>
                     <button
-                        onClick={() => onUpdateFormat('feed')}
-                        className={`flex-1 py-1.5 rounded-md text-xs font-bold transition-all ${state.format === 'feed'
+                        onClick={() => onUpdateFormat('poster')}
+                        className={`flex-1 py-2 rounded-md text-xs font-bold transition-all ${state.format === 'poster'
                             ? 'bg-neon-green text-black shadow-lg shadow-neon-green/20'
                             : 'text-gray-400 hover:text-white'
                             }`}
                     >
-                        Feed (4:5)
+                        Poster (4:5)
                     </button>
                 </div>
 
@@ -161,10 +161,10 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                                 <input type="file" className="hidden" accept="image/*" onChange={onImageUpload} />
                             </label>
 
-                            {/* Zoom & Pan Globais (Imagem) */}
-                            <div className="grid grid-cols-2 gap-3 pt-2">
+                            {/* Zoom, Rotation & Pan Globais (Imagem) */}
+                            <div className="grid grid-cols-2 gap-x-3 gap-y-4 pt-2">
                                 <div>
-                                    <label className="text-[10px] text-gray-400">Zoom ({state.config.zoom.toFixed(1)}x)</label>
+                                    <label className="text-[10px] text-gray-400 block mb-1">Zoom ({state.config.zoom.toFixed(1)}x)</label>
                                     <input
                                         type="range" min="0.1" max="3" step="0.05"
                                         value={state.config.zoom}
@@ -173,7 +173,25 @@ export function ControlPanel({ state, onUpdateData, onUpdateConfig, onUpdateForm
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] text-gray-400">Posição Y</label>
+                                    <label className="text-[10px] text-gray-400 block mb-1">Rotação ({state.config.rotation || 0}°)</label>
+                                    <input
+                                        type="range" min="-180" max="180" step="1"
+                                        value={state.config.rotation || 0}
+                                        onChange={(e) => onUpdateConfig('rotation', parseFloat(e.target.value))}
+                                        className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] text-gray-400 block mb-1">Posição X</label>
+                                    <input
+                                        type="range" min="-1000" max="1000" step="10"
+                                        value={state.config.pan.x}
+                                        onChange={(e) => onUpdateConfig('pan', { ...state.config.pan, x: parseFloat(e.target.value) })}
+                                        className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] text-gray-400 block mb-1">Posição Y</label>
                                     <input
                                         type="range" min="-1000" max="1000" step="10"
                                         value={state.config.pan.y}

@@ -15,6 +15,7 @@ const INITIAL_DATA: VehicleData = {
 const INITIAL_CONFIG: CanvasConfig = {
     zoom: 1,
     pan: { x: 0, y: 0 },
+    rotation: 0,
     overlayOpacity: 1,
 
     brand: { fontSize: 50, offsetX: 0, offsetY: 0 },
@@ -40,7 +41,7 @@ export function useKarCard() {
         value: bgLayerUrl,
         gradient: { colors: ['#CCFF00', '#000000'], direction: 180 } // Default gradient state
     });
-    const [format, setFormat] = useState<'story' | 'feed'>('story');
+    const [format, setFormat] = useState<'story' | 'poster'>('story');
 
     const discountPercentage = useMemo(() => {
         if (!data.fipePrice || !data.salePrice) return 0;

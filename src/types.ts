@@ -21,6 +21,7 @@ export interface ItemConfig {
 export interface CanvasConfig {
     zoom: number;
     pan: { x: number; y: number };
+    rotation: number; // Nova: Rotação da imagem
     overlayOpacity: number;
 
     // Elementos Individuais
@@ -52,5 +53,5 @@ export interface KarCardState {
     data: VehicleData;
     config: CanvasConfig;
     background: BackgroundConfig; // Novo: Configuração de fundo
-    format: 'story' | 'feed';
+    format: 'story' | 'poster';
 }

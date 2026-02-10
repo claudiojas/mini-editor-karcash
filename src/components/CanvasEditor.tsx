@@ -24,7 +24,7 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
             topContent: 470,
             rightColumnTop: 470,
         },
-        feed: {
+        poster: {
             width: 1080,
             height: 1350,
             topContent: 400,
@@ -120,12 +120,17 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
                 const userImg = getCachedImage(state.image);
                 if (userImg) {
                     const scale = Math.max(CANVAS_WIDTH / userImg.width, CANVAS_HEIGHT / userImg.height) * state.config.zoom;
-                    const centerX = (CANVAS_WIDTH - userImg.width * scale) / 2;
-                    const centerY = (CANVAS_HEIGHT - userImg.height * scale) / 2;
-                    const x = centerX + state.config.pan.x;
-                    const y = centerY + state.config.pan.y;
+                    const w = userImg.width * scale;
+                    const h = userImg.height * scale;
 
-                    ctx.drawImage(userImg, x, y, userImg.width * scale, userImg.height * scale);
+                    ctx.save();
+                    // Mover para o centro do enquadramento (Centro do Canvas + Pan)
+                    ctx.translate(CANVAS_WIDTH / 2 + state.config.pan.x, CANVAS_HEIGHT / 2 + state.config.pan.y);
+                    // Rotacionar
+                    ctx.rotate((state.config.rotation || 0) * Math.PI / 180);
+                    // Desenhar a imagem centralizada no novo ponto (0,0)
+                    ctx.drawImage(userImg, -w / 2, -h / 2, w, h);
+                    ctx.restore();
                 }
             }
 
