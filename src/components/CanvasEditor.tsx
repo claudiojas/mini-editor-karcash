@@ -1,5 +1,5 @@
 import { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import type { VehicleData, CanvasConfig, BackgroundConfig, ItemConfig } from '../types';
+import type { VehicleData, CanvasConfig, BackgroundConfig, ItemConfig, ImageAdjustments } from '../types';
 import logoKarcashUrl from '../assets/logo_karcash-removebg_1.webp';
 import { COLORS } from '../hooks/useKarCard';
 
@@ -10,6 +10,7 @@ interface CanvasEditorProps {
         config: CanvasConfig;
         format: 'story' | 'poster';
         background: BackgroundConfig;
+        adjustments: ImageAdjustments;
     };
     discountPercentage: number;
 }
@@ -149,6 +150,10 @@ export const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(({ st
                     const h = userImg.height * scale;
 
                     ctx.save();
+                    // Aplicar Filtros de Ajuste
+                    const adj = state.adjustments;
+                    ctx.filter = `brightness(${adj.brightness + adj.exposure}%) contrast(${adj.contrast}%) saturate(${adj.saturation}%)`;
+
                     // Mover para o centro do enquadramento (Centro do Canvas + Pan)
                     ctx.translate(CANVAS_WIDTH / 2 + state.config.pan.x, CANVAS_HEIGHT / 2 + state.config.pan.y);
                     // Rotacionar

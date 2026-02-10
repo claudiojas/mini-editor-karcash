@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import type { VehicleData, CanvasConfig, ItemConfig, BackgroundConfig } from '../types';
-import bgLayerUrl from '../assets/backgroudapp.png'; // Importar para restaurar padrão
 import { PREMIUM_BACKGROUNDS, COLORS } from '../hooks/useKarCard';
+import type { VehicleData, CanvasConfig, ItemConfig, BackgroundConfig, ImageAdjustments } from '../types';
 
 interface ControlPanelProps {
     state: {
@@ -10,6 +9,7 @@ interface ControlPanelProps {
         config: CanvasConfig;
         format: 'story' | 'poster';
         background: BackgroundConfig;
+        adjustments: ImageAdjustments;
     };
     onUpdateData: (field: any, value: any) => void;
     onUpdateConfig: (field: any, value: any) => void;
@@ -21,6 +21,8 @@ interface ControlPanelProps {
     isProcessing?: boolean;
     onRemoveBackground?: () => void;
     onRemoveImage?: () => void;
+    onUpdateAdjustments: (adj: Partial<ImageAdjustments>) => void;
+    onResetAdjustments: () => void;
 }
 
 interface ItemControlProps {
@@ -224,7 +226,9 @@ export function ControlPanel({
     onDownload,
     isProcessing = false,
     onRemoveBackground,
-    onRemoveImage
+    onRemoveImage,
+    onUpdateAdjustments,
+    onResetAdjustments
 }: ControlPanelProps) {
     const [activeTab, setActiveTab] = useState<'data' | 'texts' | 'prices' | 'bg'>('data');
 
@@ -372,6 +376,74 @@ export function ControlPanel({
                                     />
                                 </div>
                             </div>
+
+                            {/* Filtros de Ajuste da Imagem (Somente se houver imagem) */}
+                            {state.image && (
+                                <div className="bg-gray-800/40 p-3 rounded-xl border border-gray-700/50 space-y-4 shadow-inner mt-4">
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                            ✨ Ajustes da Foto
+                                        </label>
+                                        <button
+                                            onClick={onResetAdjustments}
+                                            className="text-[9px] text-neon-green hover:underline uppercase font-bold"
+                                        >
+                                            Resetar
+                                        </button>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                                        <div className="space-y-1">
+                                            <div className="flex justify-between">
+                                                <label className="text-[9px] text-gray-500 uppercase font-bold">Brilho</label>
+                                                <span className="text-[9px] text-neon-green font-mono">{state.adjustments.brightness}%</span>
+                                            </div>
+                                            <input
+                                                type="range" min="0" max="250" step="1"
+                                                value={state.adjustments.brightness}
+                                                onChange={(e) => onUpdateAdjustments({ brightness: parseInt(e.target.value) })}
+                                                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <div className="flex justify-between">
+                                                <label className="text-[9px] text-gray-500 uppercase font-bold">Contraste</label>
+                                                <span className="text-[9px] text-neon-green font-mono">{state.adjustments.contrast}%</span>
+                                            </div>
+                                            <input
+                                                type="range" min="0" max="250" step="1"
+                                                value={state.adjustments.contrast}
+                                                onChange={(e) => onUpdateAdjustments({ contrast: parseInt(e.target.value) })}
+                                                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <div className="flex justify-between">
+                                                <label className="text-[9px] text-gray-500 uppercase font-bold">Cor/Satur.</label>
+                                                <span className="text-[9px] text-neon-green font-mono">{state.adjustments.saturation}%</span>
+                                            </div>
+                                            <input
+                                                type="range" min="0" max="250" step="1"
+                                                value={state.adjustments.saturation}
+                                                onChange={(e) => onUpdateAdjustments({ saturation: parseInt(e.target.value) })}
+                                                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <div className="flex justify-between">
+                                                <label className="text-[9px] text-gray-500 uppercase font-bold">Exposição</label>
+                                                <span className="text-[9px] text-neon-green font-mono">{state.adjustments.exposure > 0 ? '+' : ''}{state.adjustments.exposure}%</span>
+                                            </div>
+                                            <input
+                                                type="range" min="-100" max="100" step="1"
+                                                value={state.adjustments.exposure}
+                                                onChange={(e) => onUpdateAdjustments({ exposure: parseInt(e.target.value) })}
+                                                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-neon-green"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Car Data */}

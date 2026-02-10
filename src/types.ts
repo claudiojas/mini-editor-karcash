@@ -60,12 +60,20 @@ export interface LayoutConfig {
     background: BackgroundConfig;
 }
 
+export interface ImageAdjustments {
+    brightness: number;
+    contrast: number;
+    saturation: number;
+    exposure: number;
+}
+
 export interface KarCardState {
-    image: string | null; // URL da imagem carregada (Carro)
+    image: string | null;
     data: VehicleData;
     format: 'story' | 'poster';
     layouts: {
         story: LayoutConfig;
         poster: LayoutConfig;
     };
+    adjustments: ImageAdjustments;
 }

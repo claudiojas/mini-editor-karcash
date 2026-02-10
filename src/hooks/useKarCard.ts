@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { removeBackground } from '@imgly/background-removal';
-import type { VehicleData, CanvasConfig, BackgroundConfig, KarCardState } from '../types';
+import type { VehicleData, CanvasConfig, BackgroundConfig, KarCardState, ImageAdjustments } from '../types';
 import bgLayerUrl from '../assets/backgroudapp.png';
 
 // Importação da Galeria de Fundos Premium
@@ -91,15 +91,26 @@ const DEFAULT_BACKGROUND: BackgroundConfig = {
     rotation: 0
 };
 
+const DEFAULT_ADJUSTMENTS: ImageAdjustments = {
+    brightness: 100,
+    contrast: 100,
+    saturation: 100,
+    exposure: 0
+};
+
 export function useKarCard() {
     // 1. Carregar estado inicial do localStorage ou usar padrões
     const loadInitialState = (): KarCardState => {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
             try {
-                return JSON.parse(saved);
+                const parsed = JSON.parse(saved);
+                return {
+                    ...parsed,
+                    adjustments: parsed.adjustments || DEFAULT_ADJUSTMENTS
+                };
             } catch (e) {
-                console.error('Failed to load saved state', e);
+                console.error('Erro ao carregar KarCardState:', e);
             }
         }
         return {
@@ -109,7 +120,8 @@ export function useKarCard() {
             layouts: {
                 story: { config: DEFAULT_STORY_CONFIG, background: DEFAULT_BACKGROUND },
                 poster: { config: DEFAULT_POSTER_CONFIG, background: DEFAULT_BACKGROUND }
-            }
+            },
+            adjustments: DEFAULT_ADJUSTMENTS
         };
     };
 
@@ -197,6 +209,20 @@ export function useKarCard() {
         }));
     };
 
+    const setAdjustments = (adjustments: Partial<ImageAdjustments>) => {
+        setState(prev => ({
+            ...prev,
+            adjustments: { ...prev.adjustments, ...adjustments }
+        }));
+    };
+
+    const resetAdjustments = () => {
+        setState(prev => ({
+            ...prev,
+            adjustments: DEFAULT_ADJUSTMENTS
+        }));
+    };
+
     const restoreDefaults = () => {
         setState(prev => ({
             ...prev,
@@ -252,6 +278,9 @@ export function useKarCard() {
         restoreDefaults,
         state, // Exportar estado completo se necessário
         isProcessing,
-        removeImageBackground
+        removeImageBackground,
+        adjustments: state.adjustments,
+        setAdjustments,
+        resetAdjustments
     };
 }

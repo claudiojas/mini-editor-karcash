@@ -20,7 +20,10 @@ function App() {
     setBackground,
     restoreDefaults,
     isProcessing,
-    removeImageBackground
+    removeImageBackground,
+    adjustments,
+    setAdjustments,
+    resetAdjustments
   } = useKarCard();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +42,7 @@ function App() {
       {/* Sidebar de Controles */}
       <aside className="w-full md:w-[400px] shrink-0 h-auto md:h-full border-t md:border-t-0 md:border-r border-gray-800 bg-gray-900 z-10 shadow-xl md:overflow-y-auto">
         <ControlPanel
-          state={{ image, data, config, format, background }}
+          state={{ image, data, config, format, background, adjustments }}
           onUpdateData={updateData}
           onUpdateConfig={updateConfig}
           onUpdateFormat={setFormat}
@@ -50,6 +53,8 @@ function App() {
           isProcessing={isProcessing}
           onRemoveBackground={removeImageBackground}
           onRemoveImage={() => setImage(null)}
+          onUpdateAdjustments={setAdjustments}
+          onResetAdjustments={resetAdjustments}
         />
       </aside>
 
@@ -59,17 +64,14 @@ function App() {
         <div className="absolute inset-0 opacity-10"
           style={{
             backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
-          }}>
-        </div>
+            backgroundSize: '20px 20px'
+          }}
+        />
 
-        <div className="z-10 flex flex-col items-center gap-4">
-
-
-
+        <div className="relative group perspective-1000">
           <CanvasEditor
             ref={canvasRef}
-            state={{ image, data, config, format, background }}
+            state={{ image, data, config, format, background, adjustments }}
             discountPercentage={discountPercentage}
           />
           <p className="text-gray-500 text-sm">
